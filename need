@@ -1,0 +1,457 @@
+🚀 MASTER PROMPT FOR AI CURSOR
+
+You are a senior full-stack architect and creative interaction designer.
+
+Your job is to build a world-class luxury lighting website for:
+
+Brand Name: Lumin Art
+Parent Brand: Light House (23-year legacy brand)
+
+This is NOT a normal website.
+This must feel like an architectural digital experience.
+
+⚠️ EXECUTION RULES
+
+Work in STRICT phases.
+
+After each phase:
+
+Explain what was created
+
+Explain why it was created
+
+Explain how to test it locally
+
+Pause for verification before moving forward
+
+Do NOT jump steps.
+
+Use scalable folder structure.
+
+Use clean, maintainable code.
+
+🏗 TECH STACK (MANDATORY)
+
+Next.js 14 (App Router)
+
+TypeScript
+
+Tailwind CSS
+
+Framer Motion (animations)
+
+Three.js or React Three Fiber (3D scroll effects – keep lightweight)
+
+ShadCN UI
+
+PDF.js (for flipbook catalogue)
+
+Zustand (state management if required)
+
+Nodemailer (contact form)
+
+No user login system
+
+Deployed ready (Vercel compatible)
+
+📦 STORAGE & BACKEND (COST-FREE EXCEPT DOMAIN)
+
+Easy to implement. Use free tiers only:
+- Vercel (hosting + serverless)
+- Vercel Blob or Cloudinary (images/catalogue pages)
+- MongoDB Atlas free tier OR JSON files / SQLite (admin content)
+- Simple JWT admin auth (no heavy security library for now)
+
+⚡ PERFORMANCE (CRITICAL)
+
+Very smooth and fast loading experience for all visitors. Catalogue must load faster – priority optimization:
+- Thumbnail-first loading (blur placeholder)
+- Progressive image loading
+- Lazy load flipbook pages on demand
+- Optimize PDF-to-image conversion (compress, responsive sizes)
+- No blocking assets – catalogue grid appears instantly
+
+🎨 BRAND IDENTITY
+
+Primary Color: #114f75
+White: #ffffff
+Black: #000000
+
+Design Style:
+
+Minimal
+
+Premium
+
+Architectural
+
+Cinematic scrolling
+
+Soft motion
+
+Luxury spacing
+
+No clutter
+
+Heavy typography
+
+Bold statements
+
+📱 MOBILE & RESPONSIVENESS (MANDATORY)
+
+Completely responsive. Mobile-friendly on all devices.
+
+Test on: phones, tablets, desktops. All sections must adapt elegantly.
+
+🌐 WEBSITE STRUCTURE
+1️⃣ Home Page (Cinematic 3D Experience)
+
+This page must feel like a digital architectural journey.
+
+Section 1: Hero
+
+Full screen
+
+3D floating light installation
+
+Subtle camera movement
+
+Text:
+“Light is not a product. It is an experience.”
+Lumin Art – Luxury Lighting Studio
+
+Smooth scroll indicator
+
+Section 2: 3D Scroll Journey – Light House Legacy
+
+When user scrolls:
+
+A timeline forms in 3D space
+
+23 years journey visualized as:
+
+Year nodes floating in depth
+
+Soft glowing lines connecting milestones
+
+As scroll continues:
+
+Timeline moves in Z-axis
+
+Camera transitions
+
+Content:
+
+Founded 23 years ago
+
+Economy range lighting leader
+
+Trusted by architects, electricians, builders
+
+After sales service strength
+
+Animation must loop smoothly and feel immersive.
+
+Section 3: Dual Brand Split Screen
+
+Left side:
+Light House (Economy Range)
+
+Right side:
+Online Fancy Light Store (Existing separate e-commerce)
+
+Both must appear as two illuminated portals.
+Hover animation:
+
+Light intensifies
+
+Slight 3D depth shift
+Click:
+
+Redirect to respective website
+
+Section 4: What is Lumin Art
+
+Luxury Lighting Experience Studio
+
+Architectural Lighting
+
+Technical Lighting
+
+Customized Fancy Lights
+
+Premium Consultation
+
+Visual:
+
+Abstract 3D light beam forms brand name
+
+Section 5: Call to Action
+
+“Architects & Designers — Let’s Collaborate”
+
+Smooth animated button
+
+Scroll snap transition
+
+📚 CATALOGUE SYSTEM (Critical Feature)
+
+Admin can upload PDF catalogue.
+
+System must:
+
+Convert PDF into images server-side
+
+Store pages individually
+
+Generate thumbnail preview
+
+Display catalogue grid
+
+On click → Open Flipbook Viewer
+
+Flipbook Requirements:
+
+Smooth page flip animation
+
+Page curl effect
+
+Zoomable pages
+
+Fast loading
+
+Lazy loading pages
+
+Mobile responsive
+
+No external slow iframe viewers
+
+Use:
+
+PDF.js
+
+Page-flip library or custom animation
+
+Admin (separate portal – /admin):
+
+Upload catalogue
+
+Edit catalogue (title, cover, order, replace PDF)
+
+Remove catalogue
+
+Reorder catalogues
+
+No public login. Only admin accesses this.
+
+📰 BLOG / DETAIL PAGE
+
+Admin can post:
+
+Examples:
+
+3 Degree Lens Lighting Explained
+
+BLDC vs Non-BLDC Fans
+
+Materials Used in Luxury Lights
+
+Features:
+
+Rich text editor
+
+Slug-based routing (auto-generated from title; admin can edit slug before publish)
+
+Clean typography
+
+Reading progress bar animation
+
+Floating side navigation for headings
+
+SEO (implement for all pages):
+- Meta tags (title, description)
+- Open Graph (og:title, og:description, og:image, og:url)
+- JSON-LD structured data (Article, Organization)
+- Canonical URLs
+- Sitemap.xml (auto-generated)
+
+🤝 ARCHITECT COLLABORATION PAGE
+
+Features:
+
+Form:
+
+Name
+
+Firm Name
+
+Email
+
+Phone
+
+Project Type
+
+Message
+
+Nodemailer backend
+
+Styled premium form
+
+Success animation
+
+Basic form validation (no heavy captcha for now)
+
+🧱 ADDITIONAL REQUIRED PAGES
+
+About Us (Storytelling layout)
+
+Studio Philosophy
+
+Process (Consult → Design → Execution)
+
+Projects Showcase (Animated grid)
+
+Contact
+
+Privacy Policy
+
+🧠 UNIQUE FEATURES (MANDATORY)
+
+Cursor-following soft glow light
+
+Scroll-triggered depth parallax
+
+Light rays from top flowing down as user scrolls (subtle, elegant)
+
+Micro animations on every block
+
+No static boring sections
+
+Smooth scroll (Lenis or custom)
+
+Page transition animations
+
+Preloader with light pulse effect
+
+Make it feel like:
+Apple + Architectural Studio + Art Installation
+
+REFERENCE WEBSITES (inspiration – keep it light, not heavy)
+
+https://fooror.com/ – clean, easy to understand, not overwhelming
+
+https://resn.co.nz/ – creative digital agency feel
+
+https://activetheory.net/ – immersive but accessible
+
+Creative direction:
+- Light rays emanating from top, flowing downward as user scrolls (subtle, elegant)
+- Add own creative touches – beams, glows, depth – but keep it easy to navigate
+- Not heavy. Customer should understand the site quickly.
+
+🛠 ADMIN SYSTEM (SEPARATE PORTAL)
+
+Admin has its own portal / login system (e.g. /admin) – separate from main public site.
+
+Admin login:
+
+Simple email/password
+
+JWT token
+
+Protected admin routes (only logged-in admin can access)
+
+Admin portal capabilities:
+
+Catalogue:
+- Upload catalogue
+- Edit catalogue (title, cover, order, replace PDF)
+- Remove catalogue
+- Reorder catalogues
+
+Blog / Details:
+- Upload blog posts
+- Edit blog posts
+- Remove blog posts
+
+Preview before publish
+
+No public user login. Only admin uses this portal.
+
+📁 PROJECT STRUCTURE
+
+Explain:
+
+Folder structure
+
+API routes
+
+Component breakdown
+
+3D scene folder
+
+Animation logic
+
+CMS structure
+
+🧪 AFTER EACH PHASE
+
+You must:
+
+Show created files
+
+Explain what they do
+
+Explain how to run:
+
+npm install
+
+npm run dev
+
+Explain how to verify visually
+
+Pause and ask for confirmation before next phase
+
+🎯 FINAL GOAL
+
+This website must:
+
+Not feel template-based
+
+Not look like Shopify
+
+Not look common
+
+Feel like a luxury architectural digital installation
+
+Be scalable for international expansion
+
+IMPORTANT
+
+Do not generate everything at once.
+
+Work Phase-by-Phase:
+
+Phase 1:
+
+Setup project
+
+Install dependencies
+
+Base layout
+
+Tailwind config
+
+Global theme
+
+Smooth scroll
+
+STOP.
+
+Wait for verification.
+
+Then Phase 2.
+
+Build this like a high-end product studio.
+
+Start with Phase 1.
