@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { uploadToB2, isB2Configured } from "@/lib/b2";
 
-const MAX_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_SIZE = 100 * 1024 * 1024; // 100MB
 const ALLOWED_TYPES = [
   "application/pdf",
   "image/jpeg",
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const buffer = Buffer.from(bytes);
     if (buffer.length > MAX_SIZE) {
       return NextResponse.json(
-        { error: "File too large. Max 50MB." },
+        { error: "File too large. Max 100MB." },
         { status: 400 }
       );
     }

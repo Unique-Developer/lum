@@ -17,6 +17,9 @@ const ACCEPT_MAP = {
   video: "video/mp4,video/webm,video/quicktime",
 };
 
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024; // 4MB — Vercel body limit ~4.5MB; only use server fallback below this
+
 export function FileUpload({
   accept,
   prefix = "catalogue",
@@ -34,11 +37,17 @@ export function FileUpload({
     if (!file) return;
 
     setError("");
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File too large. Maximum size is 100 MB.");
+      return;
+    }
+
     setUploading(true);
     const headers = getHeaders();
+    const useServerFallback = file.size <= SERVER_UPLOAD_LIMIT;
 
     try {
-      // 1. Try presigned direct upload (no Vercel body limit; requires B2 CORS to allow PUT)
+      // 1. Try presigned direct upload (supports up to 100MB; requires B2 CORS to allow PUT)
       const presignRes = await fetch(
         `/api/admin/upload/presign?filename=${encodeURIComponent(file.name)}&contentType=${encodeURIComponent(file.type)}&prefix=${encodeURIComponent(prefix)}`,
         { headers }
@@ -57,11 +66,28 @@ export function FileUpload({
           return;
         }
       }
+
+      // 2. For files > 4MB, presigned is required (server upload hits Vercel body limit)
+      if (!useServerFallback) {
+        setError(
+          "Upload failed. Files over 4 MB require direct upload. Configure B2 CORS to allow PUT from your site (see BACKEND-SETUP.md, Step 2.6)."
+        );
+        setUploading(false);
+        e.target.value = "";
+        return;
+      }
     } catch {
-      // Presigned path failed (e.g. CORS). Fall through to server upload.
+      if (!useServerFallback) {
+        setError(
+          "Upload failed. Files over 4 MB require B2 CORS to allow PUT. See BACKEND-SETUP.md."
+        );
+        setUploading(false);
+        e.target.value = "";
+        return;
+      }
     }
 
-    // 2. Fallback: upload via our API (works without B2 CORS; Vercel limits body to ~4.5MB)
+    // 3. Fallback for small files only: upload via API (≤ 4MB)
     try {
       const formData = new FormData();
       formData.append("file", file);
