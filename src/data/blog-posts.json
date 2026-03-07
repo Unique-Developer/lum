@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "slug": "3-degree-lens-lighting-explained",
+    "title": "3 Degree Lens Lighting Explained",
+    "excerpt": "Understanding narrow-beam lens technology and its applications in precision architectural lighting.",
+    "content": "<p>3-degree lens lighting represents the pinnacle of precision in architectural illumination. These narrow-beam fixtures concentrate light into a tight cone, typically used for accent lighting, art illumination, and creating dramatic focal points.</p><h2>How It Works</h2><p>The 3-degree beam angle is achieved through specialized optical lenses that collimate light emitted from LEDs. Unlike standard diffused fixtures, these lenses minimize spill and maximize throw distance.</p><h2>Best Applications</h2><ul><li>Art galleries and museums</li><li>Retail accent on products</li><li>Residential feature walls</li><li>Restaurant table highlights</li></ul><p>When specifying 3-degree lens lighting, consider mounting height and distance to target. The narrower the beam, the more critical precise positioning becomes.</p>",
+    "publishedAt": "2024-02-15T10:00:00Z",
+    "author": "Lumin Art Studio"
+  },
+  {
+    "id": "2",
+    "slug": "bldc-vs-non-bldc-fans",
+    "title": "BLDC vs Non-BLDC Fans",
+    "excerpt": "A technical comparison of brushless DC motor fans and traditional alternatives for ceiling installations.",
+    "content": "<p>BLDC (Brushless DC) ceiling fans have become the standard for energy-efficient residential and commercial installations. Here we break down the key differences.</p><h2>What is BLDC?</h2><p>BLDC motors use electronic commutation instead of brushes. This eliminates friction, reduces heat, and extends motor life significantly—often 2–3x longer than traditional induction motors.</p><h2>Energy Consumption</h2><p>BLDC fans typically consume 30–50% less power for the same airflow. At scale—hotels, offices, homes—this translates to substantial savings on electricity bills.</p><h2>Performance Comparison</h2><ul><li>BLDC: Quieter, more efficient, variable speed, longer warranty</li><li>Non-BLDC: Lower upfront cost, simpler electronics, widely available</li></ul><p>For new projects, we recommend specifying BLDC fans. The higher initial cost is offset by energy savings within 2–3 years.</p>",
+    "publishedAt": "2024-02-10T10:00:00Z",
+    "author": "Lumin Art Studio"
+  },
+  {
+    "id": "3",
+    "slug": "materials-used-in-luxury-lights",
+    "title": "Materials Used in Luxury Lights",
+    "excerpt": "An exploration of premium materials—brass, crystal, hand-blown glass—that define high-end lighting fixtures.",
+    "content": "<p>Luxury lighting distinguishes itself through material choice and craft. At Lumin Art, we work with a curated selection of premium materials.</p><h2>Metals</h2><p><strong>Brass:</strong> Warm, durable, ages beautifully. We offer polished, satin, and blackened brass finishes. <strong>Copper:</strong> Excellent thermal conductivity for heat dissipation in LED fixtures. Often used in pendant designs.</p><h2>Glass</h2><p><strong>Hand-blown glass:</strong> Each piece is unique. Murano-style techniques create organic forms and subtle color variation. <strong>Optical crystal:</strong> For chandeliers and decorative pendants. Cuts and refracts light for maximum sparkle.</p><h2>Sustainability</h2><p>We prioritize recyclable metals and responsibly sourced materials. Our glass partners use closed-loop production where possible.</p>",
+    "publishedAt": "2024-02-05T10:00:00Z",
+    "author": "Lumin Art Studio"
+  }
+]

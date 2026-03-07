@@ -1,24 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-
-const Hero3DCanvas = dynamic(
-  () =>
-    import("@/components/scenes/Hero3DCanvas").then((mod) => mod.Hero3DCanvas),
-  {
-    ssr: false,
-    loading: () => <div className="absolute inset-0 bg-background" />,
-  }
-);
 
 export function HeroSection() {
   return (
     <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background">
-      {/* 3D Canvas - full screen background */}
-      <div className="absolute inset-0 z-0">
-        <Hero3DCanvas />
-      </div>
+      {/* Subtle animated background instead of 3D canvas (temporary) */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_top,_rgba(17,79,117,0.25),_transparent_55%)]" />
 
       {/* Text overlay */}
       <div className="relative z-10 px-6 text-center">

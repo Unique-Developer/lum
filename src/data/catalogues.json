@@ -1,0 +1,29 @@
+[
+  {
+    "id": "luxury-lighting-2024",
+    "title": "Luxury Lighting Collection 2024",
+    "description": "Premium architectural and decorative lighting solutions.",
+    "coverImage": "/catalogue/cover-luxury-2024.jpg",
+    "pdfUrl": "/catalogue/luxury-lighting-2024.pdf",
+    "pageCount": 24,
+    "order": 0
+  },
+  {
+    "id": "architectural-technical",
+    "title": "Architectural & Technical Lighting",
+    "description": "Technical specifications for professional installations.",
+    "coverImage": "/catalogue/cover-technical.jpg",
+    "pdfUrl": "/catalogue/architectural-technical.pdf",
+    "pageCount": 32,
+    "order": 1
+  },
+  {
+    "id": "b2-test-catalogue",
+    "title": "Backblaze B2 Test Catalogue",
+    "description": "Test catalogue to verify PDF and image loading from Backblaze B2.",
+    "coverImage": "https://s3.us-west-004.backblazeb2.com/luminart-app/catalogue/b2-test-cover.jpg",
+    "pdfUrl": "https://s3.us-west-004.backblazeb2.com/luminart-app/catalogue/b2-test-catalogue.pdf",
+    "pageCount": 8,
+    "order": 2
+  }
+]

@@ -1,14 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
-
-const Legacy3DCanvas = dynamic(
-  () =>
-    import("@/components/scenes/Legacy3DCanvas").then((mod) => mod.Legacy3DCanvas),
-  { ssr: false }
-);
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const MILESTONES = [
   {
@@ -40,37 +33,30 @@ const MILESTONES = [
 
 export function LightHouseLegacySection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [progress, setProgress] = useState(0);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
 
-  const canvasProgress = useTransform(
+  const bgOpacity = useTransform(
     scrollYProgress,
     [0.2, 0.5, 0.8],
     [0, 1, 0]
   );
-
-  useMotionValueEvent(canvasProgress, "change", (latest) => {
-    setProgress(latest);
-  });
 
   return (
     <section
       ref={sectionRef}
       className="relative min-h-[200vh] overflow-hidden bg-background"
     >
-      {/* Sticky 3D canvas */}
+      {/* Sticky background (replaces 3D canvas to avoid React/Three.js conflict) */}
       <div className="sticky top-0 h-screen">
         <div className="absolute inset-0">
           <motion.div
-            style={{ opacity: canvasProgress }}
-            className="absolute inset-0"
-          >
-            <Legacy3DCanvas scrollProgress={progress} />
-          </motion.div>
+            style={{ opacity: bgOpacity }}
+            className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_50%,rgba(17,79,117,0.15),transparent_70%)]"
+          />
         </div>
       </div>
 
