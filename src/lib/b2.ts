@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const endpoint = process.env.B2_ENDPOINT ?? "https://s3.us-west-004.backblazeb2.com";
 const region = process.env.B2_REGION ?? "us-west-004";
@@ -54,4 +55,28 @@ export async function uploadToB2(
 
 export function isB2Configured(): boolean {
   return !!(keyId && appKey && bucket);
+}
+
+/**
+ * Generate a presigned PUT URL for direct upload to B2.
+ * Client uploads the file directly to B2, bypassing Vercel's 4.5MB body limit.
+ */
+export async function createPresignedUploadUrl(
+  key: string,
+  contentType: string
+): Promise<{ uploadUrl: string; publicUrl: string }> {
+  if (!bucket) throw new Error("B2_BUCKET_NAME must be set");
+
+  const s3 = getClient();
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    ContentType: contentType,
+  });
+
+  const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+  const baseUrl = `https://${bucket}.s3.${region}.backblazeb2.com`;
+  const publicUrl = `${baseUrl}/${key}`;
+
+  return { uploadUrl, publicUrl };
 }

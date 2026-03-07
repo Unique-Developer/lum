@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, slug, excerpt, content, author, thumbnail, media, adminNotes } = body;
+    const { title, slug, excerpt, content, author, thumbnail, media, adminNotes, postType } = body;
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
     }
@@ -62,6 +62,8 @@ export async function POST(req: Request) {
         adminNotes !== undefined && typeof adminNotes === "string"
           ? adminNotes.trim() || undefined
           : undefined,
+      postType:
+        postType === "social" || postType === "blog" ? postType : undefined,
     };
 
     posts.push(newPost);

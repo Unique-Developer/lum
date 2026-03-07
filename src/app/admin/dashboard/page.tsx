@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { Logo } from "@/components/layout/Logo";
 
 export default function AdminDashboardPage() {
   const { token, email, logout } = useAdminAuth();
@@ -21,9 +22,10 @@ export default function AdminDashboardPage() {
     <main className="min-h-screen">
       <header className="border-b border-foreground/10 px-6 py-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/admin/dashboard" className="text-lg font-semibold tracking-tight text-primary-main">
-            Lumin Art Admin
-          </Link>
+          <div className="flex items-center gap-3">
+            <Logo href="/admin/dashboard" height={32} width={100} />
+            <span className="text-sm text-foreground/60">Admin</span>
+          </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-foreground/60">{email}</span>
             <button

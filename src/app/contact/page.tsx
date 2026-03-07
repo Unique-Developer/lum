@@ -54,7 +54,7 @@ export default function ContactPage() {
             <div className="border-t border-foreground/10 pt-10">
               <h2 className="text-lg font-semibold text-foreground">Office</h2>
               <p className="mt-2 text-foreground/70">
-                Lumin Art — A Light House brand
+                Lumin Art — A Light House Creation
                 <br />
                 Trusted by architects, electricians, and builders for over 23 years.
               </p>

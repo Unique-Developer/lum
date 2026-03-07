@@ -32,7 +32,7 @@ export function getOrganizationJsonLd() {
     url,
     logo: absoluteUrl("/opengraph-image"),
     description:
-      "Luxury Lighting Studio. Light is not a product. It is an experience. Part of Light House's 23-year legacy.",
+      "Luxury Lighting Studio. Light is not a product. It is an experience. A Light House Creation.",
     foundingDate: "2001",
     sameAs: [],
   };

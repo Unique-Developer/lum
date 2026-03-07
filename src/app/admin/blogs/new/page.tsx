@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { FileUpload } from "@/components/admin/FileUpload";
-import type { PostMediaItem } from "@/lib/blog";
+import type { PostMediaItem, PostType } from "@/lib/blog";
 
 export default function NewBlogPage() {
   const { token, getHeaders } = useAdminAuth();
@@ -22,6 +22,7 @@ export default function NewBlogPage() {
     thumbnail: "",
     media: [] as PostMediaItem[],
     adminNotes: "",
+    postType: "blog" as PostType,
   });
 
   if (!token) {
@@ -42,6 +43,7 @@ export default function NewBlogPage() {
         thumbnail: form.thumbnail || undefined,
         media: form.media.length ? form.media : undefined,
         adminNotes: form.adminNotes.trim() || undefined,
+        postType: form.postType,
       }),
       });
       const data = await res.json().catch(() => ({}));
@@ -98,6 +100,21 @@ export default function NewBlogPage() {
                 onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
               />
+            </div>
+            <div>
+              <label htmlFor="postType" className="block text-sm font-medium text-foreground">
+                Post type
+              </label>
+              <p className="mt-0.5 text-xs text-foreground/60">Blog = article with TOC; Social = Instagram-style single post.</p>
+              <select
+                id="postType"
+                value={form.postType}
+                onChange={(e) => setForm((f) => ({ ...f, postType: e.target.value as PostType }))}
+                className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+              >
+                <option value="blog">Blog article</option>
+                <option value="social">Social / Instagram</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground">Thumbnail (for card)</label>

@@ -158,9 +158,9 @@ B2_ENDPOINT=https://s3.us-west-004.backblazeb2.com
 
 Replace with your actual values.
 
-### Step 2.6: Configure CORS (for PDF.js)
+### Step 2.6: Configure CORS (for PDF.js and Admin Uploads)
 
-If the app loads PDFs directly from B2 in the browser (e.g. PDF.js), CORS must allow it:
+CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) Admin file uploads (presigned PUT from the live site):
 
 1. In B2: **Buckets** → select your bucket
 2. Open **Bucket Settings** (gear icon)
@@ -172,7 +172,7 @@ If the app loads PDFs directly from B2 in the browser (e.g. PDF.js), CORS must a
   {
     "corsRuleName": "allowAll",
     "allowedOrigins": ["*"],
-    "allowedOperations": ["s3_get"],
+    "allowedOperations": ["s3_get", "s3_put"],
     "allowedHeaders": ["*"],
     "exposeHeaders": [],
     "maxAgeSeconds": 3600

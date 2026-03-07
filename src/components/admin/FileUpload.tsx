@@ -36,21 +36,27 @@ export function FileUpload({
     setError("");
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("prefix", prefix);
-
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-        headers: getHeaders(),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error ?? "Upload failed");
+      const headers = getHeaders();
+      const presignRes = await fetch(
+        `/api/admin/upload/presign?filename=${encodeURIComponent(file.name)}&contentType=${encodeURIComponent(file.type)}&prefix=${encodeURIComponent(prefix)}`,
+        { headers }
+      );
+      const presignData = await presignRes.json();
+      if (!presignRes.ok) {
+        throw new Error(presignData.error ?? "Could not get upload URL");
       }
-      onUpload(data.url);
+
+      const uploadRes = await fetch(presignData.uploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+      if (!uploadRes.ok) {
+        throw new Error("Upload to storage failed");
+      }
+      onUpload(presignData.publicUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

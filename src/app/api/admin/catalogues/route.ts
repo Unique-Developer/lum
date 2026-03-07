@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       id: finalId,
       title: String(title).trim(),
       description: String(description ?? "").trim(),
-      coverImage: String(coverImage ?? "/catalogue/placeholder.jpg").trim(),
+      coverImage: String(coverImage ?? "").trim() || "/logo.png",
       pdfUrl: String(pdfUrl ?? "").trim(),
       pageCount: Number(pageCount) || 0,
       order: maxOrder + 1,

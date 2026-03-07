@@ -1,7 +1,7 @@
 import { readBlogPosts } from "./storage";
 import type { BlogPost, PostMediaItem } from "./blog-types";
 
-export type { BlogPost, PostMediaItem } from "./blog-types";
+export type { BlogPost, PostMediaItem, PostType } from "./blog-types";
 
 export async function getBlogPosts(): Promise<BlogPost[]> {
   const posts = await readBlogPosts();

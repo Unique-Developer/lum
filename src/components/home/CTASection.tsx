@@ -10,7 +10,7 @@ export function CTASection() {
       <div className="absolute inset-0 bg-gradient-to-b from-primary-main/5 via-transparent to-transparent" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(17,79,117,0.06)_0%,transparent_70%)]" />
 
-      <div className="relative z-10 px-6 text-center">
+      <div className="relative z-10 px-4 text-center sm:px-6">
         <motion.div
           className="mx-auto max-w-2xl"
           initial={{ opacity: 0, y: 32 }}
@@ -18,12 +18,12 @@ export function CTASection() {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="mb-8 text-3xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+          <h2 className="font-display mb-6 text-2xl font-semibold tracking-tight text-foreground sm:mb-8 sm:text-3xl md:text-5xl lg:text-6xl">
             Architects & Designers
             <br />
             <span className="text-primary-main">Let&apos;s Collaborate</span>
           </h2>
-          <p className="mb-12 text-lg text-foreground/70 md:text-xl">
+          <p className="mb-10 text-base text-foreground/70 sm:mb-12 sm:text-lg md:text-xl">
             Bring your vision to light. Connect with our premium consultation
             team.
           </p>
@@ -36,7 +36,7 @@ export function CTASection() {
           >
             <Link href="/architect-collaboration">
               <motion.span
-                className="inline-flex items-center gap-3 rounded-full border-2 border-primary-main bg-primary-main px-10 py-4 text-base font-medium text-white transition-colors hover:bg-primary-main/90 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2"
+                className="inline-flex items-center gap-3 rounded-full border-2 border-primary-main bg-primary-main px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-primary-main/90 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 sm:px-10 sm:py-4 sm:text-base"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}

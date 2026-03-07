@@ -32,13 +32,13 @@ export function CursorGlow() {
       transition={{ delay: 2.8, duration: 0.5 }}
     >
       <motion.div
-        className="absolute h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="absolute h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
           left: pos.x,
           top: pos.y,
           background:
-            "radial-gradient(circle, rgba(17, 79, 117, 0.06) 0%, rgba(17, 79, 117, 0.02) 30%, transparent 60%)",
-          filter: "blur(30px)",
+            "radial-gradient(circle, rgba(17, 79, 117, 0.09) 0%, rgba(17, 79, 117, 0.04) 35%, transparent 65%)",
+          filter: "blur(40px)",
         }}
       />
     </motion.div>

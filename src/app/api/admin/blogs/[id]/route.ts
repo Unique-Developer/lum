@@ -75,6 +75,10 @@ export async function PUT(
         body.adminNotes !== undefined
           ? (typeof body.adminNotes === "string" ? body.adminNotes.trim() : undefined) || undefined
           : current.adminNotes,
+      postType:
+        body.postType === "social" || body.postType === "blog"
+          ? body.postType
+          : current.postType,
     };
 
     posts[idx] = updated;

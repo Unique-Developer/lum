@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
 import { FileUpload } from "@/components/admin/FileUpload";
-import type { BlogPost, PostMediaItem } from "@/lib/blog";
+import type { BlogPost, PostMediaItem, PostType } from "@/lib/blog";
 
 type FormPost = BlogPost;
 
@@ -51,6 +51,7 @@ export default function EditBlogPage() {
           thumbnail: form.thumbnail || undefined,
           media: form.media?.length ? form.media : undefined,
           adminNotes: form.adminNotes?.trim() || undefined,
+          postType: form.postType === "social" || form.postType === "blog" ? form.postType : undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -110,6 +111,21 @@ export default function EditBlogPage() {
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
               />
               <p className="mt-1 text-xs text-foreground/50">URL: /posts/{form.slug}</p>
+            </div>
+            <div>
+              <label htmlFor="postType" className="block text-sm font-medium text-foreground">
+                Post type
+              </label>
+              <p className="mt-0.5 text-xs text-foreground/60">Blog = article with TOC; Social = Instagram-style.</p>
+              <select
+                id="postType"
+                value={form.postType ?? "blog"}
+                onChange={(e) => setForm((f) => f && { ...f, postType: e.target.value as PostType })}
+                className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+              >
+                <option value="blog">Blog article</option>
+                <option value="social">Social / Instagram</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground">Thumbnail (for card)</label>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 const PRELOADER_KEY = "luminart-preloader-shown";
@@ -31,9 +32,9 @@ export function Preloader() {
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+            transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
           }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4 }}
         >
           {/* Light pulse - expanding/contracting glow */}
           <motion.div
@@ -85,19 +86,21 @@ export function Preloader() {
             />
           </motion.div>
 
-          {/* Brand text */}
+          {/* Brand logo */}
           <motion.div
-            className="relative z-10 text-center"
+            className="relative z-10 flex flex-col items-center"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <h1
-              className="text-2xl font-semibold tracking-tight text-foreground md:text-4xl"
-              style={{ color: "#114f75" }}
-            >
-              Lumin Art
-            </h1>
+            <Image
+              src="/logo.png"
+              alt="Lumin Art"
+              width={180}
+              height={56}
+              className="object-contain"
+              priority
+            />
             <motion.p
               className="mt-2 text-sm text-foreground/60 md:text-base"
               initial={{ opacity: 0 }}

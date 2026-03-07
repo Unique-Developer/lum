@@ -8,6 +8,8 @@ export type PostMediaItem = {
   url: string;
 };
 
+export type PostType = "blog" | "social";
+
 export type BlogPost = {
   id: string;
   slug: string;
@@ -19,6 +21,8 @@ export type BlogPost = {
   thumbnail?: string;
   media?: PostMediaItem[];
   adminNotes?: string;
+  /** "social" = Instagram-style post; "blog" or undefined = article */
+  postType?: PostType;
 };
 
 /** Filter posts by search query (pure function, no DB). Safe for client. */

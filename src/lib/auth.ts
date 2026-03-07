@@ -1,9 +1,14 @@
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "lumin-art-admin-secret-change-in-production"
-);
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (process.env.NODE_ENV === "production" && !secret) {
+    throw new Error("JWT_SECRET must be set in production. Add it to your environment variables.");
+  }
+  return secret || "lumin-art-admin-dev-secret";
+}
+const JWT_SECRET = new TextEncoder().encode(getJwtSecret());
 const JWT_ISSUER = "lumin-art-admin";
 const JWT_AUDIENCE = "lumin-art-admin";
 const JWT_EXPIRY = "7d";

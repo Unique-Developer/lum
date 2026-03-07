@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "./Logo";
 
 const mainLinks = [
   { href: "/catalogue", label: "Catalogue" },
@@ -16,45 +17,74 @@ const otherLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-foreground/10 bg-foreground/[0.02] px-6 py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-          <Link
-            href="/"
-            className="text-lg font-semibold tracking-tight text-primary-main hover:underline"
+    <footer className="relative overflow-hidden border-t border-foreground/10 bg-gradient-to-b from-foreground/[0.02] to-primary-50/30">
+      {/* Subtle ambient glow — references light/luxury theme */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-40"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 100%, rgba(17, 79, 117, 0.06) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto] lg:gap-16">
+          {/* Brand column */}
+          <div className="space-y-4">
+            <Logo href="/" height={40} width={130} />
+            <p className="max-w-xs text-sm leading-relaxed text-foreground/60">
+              Light is not a product. It is an experience. Luxury lighting studio — A Light House Creation.
+            </p>
+            <div className="h-px w-12 bg-primary-main/30" aria-hidden />
+          </div>
+
+          {/* Main nav */}
+          <nav
+            aria-label="Footer navigation"
+            className="grid grid-cols-2 gap-x-8 gap-y-3"
           >
-            Lumin Art
-          </Link>
-          <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
             {mainLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className="text-foreground/70 transition-colors hover:text-foreground"
+                className="text-sm font-medium text-foreground/70 transition-colors hover:text-primary-main focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-main focus-visible:ring-offset-2 rounded"
               >
                 {label}
               </Link>
             ))}
           </nav>
-        </div>
-        <nav
-          aria-label="Legal and collaboration"
-          className="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-foreground/10 pt-6 text-sm text-foreground/60"
-        >
-          {otherLinks.map(({ href, label }) => (
+
+          {/* Collaborate + legal */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start lg:flex-col">
             <Link
-              key={href}
-              href={href}
-              className="hover:text-foreground transition-colors"
+              href="/architect-collaboration"
+              className="group inline-flex items-center gap-2 text-sm font-medium text-primary-main transition-colors hover:text-primary-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-main focus-visible:ring-offset-2 rounded"
             >
-              {label}
+              <span className="rounded-full bg-primary-100 px-2.5 py-1 text-xs font-semibold text-primary-main">
+                For pros
+              </span>
+              Architects — Collaborate
             </Link>
-          ))}
-        </nav>
+            <Link
+              href="/privacy-policy"
+              className="text-sm text-foreground/55 transition-colors hover:text-foreground/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-main focus-visible:ring-offset-2 rounded"
+            >
+              Privacy Policy
+            </Link>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/10 pt-8 md:flex-row md:pt-10">
+          <p className="text-center text-sm text-foreground/50 md:text-left">
+            © {new Date().getFullYear()} Lumin Art. All rights reserved.
+          </p>
+          <p className="text-sm text-foreground/40">
+            A Light House Creation.
+          </p>
+        </div>
       </div>
-      <p className="mx-auto mt-8 max-w-6xl text-center text-sm text-foreground/50">
-        © {new Date().getFullYear()} Lumin Art. Luxury Lighting Studio. A Light House brand.
-      </p>
     </footer>
   );
 }
