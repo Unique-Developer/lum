@@ -12,7 +12,19 @@ type FlipbookViewerProps = {
   title: string;
 };
 
+/**
+ * Use same-origin proxy for external PDF URLs to avoid CORS on mobile.
+ * B2 URLs fail on mobile Safari due to strict CORS; proxying fixes this.
+ */
+function getEffectivePdfUrl(pdfUrl: string): string {
+  if (pdfUrl.startsWith("http://") || pdfUrl.startsWith("https://")) {
+    return `/api/catalogue/pdf?url=${encodeURIComponent(pdfUrl)}`;
+  }
+  return pdfUrl;
+}
+
 export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps) {
+  const effectivePdfUrl = getEffectivePdfUrl(pdfUrl);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCache, setPageCache] = useState<Record<number, string>>({});
   const [docReady, setDocReady] = useState(false);
@@ -36,7 +48,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
       let doc = pdfDocRef.current;
       if (!doc) {
         try {
-          doc = await pdfjsLib.getDocument(pdfUrl).promise;
+          doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
           pdfDocRef.current = doc;
         } catch (e) {
           console.warn("PDF load failed:", e);
@@ -56,7 +68,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
       const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
       return dataUrl;
     },
-    [pdfUrl, totalPages]
+    [effectivePdfUrl, totalPages]
   );
 
   const ensurePage = useCallback(
@@ -79,7 +91,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
       try {
         const pdfjsLib = await import("pdfjs-dist");
         pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
-        const doc = await pdfjsLib.getDocument(pdfUrl).promise;
+        const doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
         if (cancelled) return;
         pdfDocRef.current = doc;
         setDocReady(true);
@@ -93,7 +105,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
     return () => {
       cancelled = true;
     };
-  }, [pdfUrl]);
+  }, [effectivePdfUrl]);
 
   useEffect(() => {
     if (!docReady || error) return;
