@@ -35,28 +35,45 @@ export function FileUpload({
 
     setError("");
     setUploading(true);
+    const headers = getHeaders();
+
     try {
-      const headers = getHeaders();
+      // 1. Try presigned direct upload (no Vercel body limit; requires B2 CORS to allow PUT)
       const presignRes = await fetch(
         `/api/admin/upload/presign?filename=${encodeURIComponent(file.name)}&contentType=${encodeURIComponent(file.type)}&prefix=${encodeURIComponent(prefix)}`,
         { headers }
       );
       const presignData = await presignRes.json();
-      if (!presignRes.ok) {
-        throw new Error(presignData.error ?? "Could not get upload URL");
+      if (presignRes.ok) {
+        const uploadRes = await fetch(presignData.uploadUrl, {
+          method: "PUT",
+          body: file,
+          headers: { "Content-Type": file.type },
+        });
+        if (uploadRes.ok) {
+          onUpload(presignData.publicUrl);
+          e.target.value = "";
+          setUploading(false);
+          return;
+        }
       }
+    } catch {
+      // Presigned path failed (e.g. CORS). Fall through to server upload.
+    }
 
-      const uploadRes = await fetch(presignData.uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
+    // 2. Fallback: upload via our API (works without B2 CORS; Vercel limits body to ~4.5MB)
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("prefix", prefix);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: formData,
+        headers,
       });
-      if (!uploadRes.ok) {
-        throw new Error("Upload to storage failed");
-      }
-      onUpload(presignData.publicUrl);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Upload failed");
+      onUpload(data.url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

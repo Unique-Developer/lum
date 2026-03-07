@@ -160,12 +160,12 @@ Replace with your actual values.
 
 ### Step 2.6: Configure CORS (for PDF.js and Admin Uploads)
 
-CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) Admin file uploads (presigned PUT from the live site):
+CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) Admin file uploads (presigned PUT from the live site).
 
-1. In B2: **Buckets** → select your bucket
-2. Open **Bucket Settings** (gear icon)
-3. Find **CORS Rules**
-4. If the UI does not show an option to add a custom rule, click the option to "Edit JSON" (often labeled "Edit rules as JSON" or similar). Paste in the following CORS configuration, then save:
+**Option A – B2 Web UI (if your bucket has “Edit as JSON”)**
+
+1. In B2: **Buckets** → select your bucket → **Bucket Settings** (gear) → **CORS Rules**
+2. Choose **Edit as JSON** and use rules that include **s3_put** (not only s3_get). Example:
 
 ```json
 [
@@ -180,7 +180,38 @@ CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) Admin file upload
 ]
 ```
 
-5. Save the rule
+3. Save. If the UI only allows “all HTTPS origins” and no custom JSON, it may allow reads only; use Option B.
+
+**Option B – AWS CLI (S3-compatible; guarantees PUT works)**
+
+If the web UI doesn’t allow PUT, set CORS with the S3-compatible API. Replace `luminart-app`, `us-east-005`, and your B2 key ID/application key.
+
+```bash
+# Create cors.xml (allowed methods must include PUT)
+cat > cors.xml << 'EOF'
+<CORSConfiguration>
+  <CORSRule>
+    <AllowedOrigin>https://theluminart.com</AllowedOrigin>
+    <AllowedOrigin>https://www.theluminart.com</AllowedOrigin>
+    <AllowedOrigin>http://localhost:3000</AllowedOrigin>
+    <AllowedMethod>GET</AllowedMethod>
+    <AllowedMethod>PUT</AllowedMethod>
+    <AllowedMethod>HEAD</AllowedMethod>
+    <AllowedHeader>*</AllowedHeader>
+    <MaxAgeSeconds>3600</MaxAgeSeconds>
+  </CORSRule>
+</CORSConfiguration>
+EOF
+
+# Set CORS (use your B2_APPLICATION_KEY_ID and B2_APPLICATION_KEY)
+aws s3api put-bucket-cors --bucket luminart-app --cors-configuration file://cors.xml \
+  --endpoint-url https://s3.us-east-005.backblazeb2.com \
+  --region us-east-005
+```
+
+Configure AWS CLI to use B2 credentials for this endpoint (e.g. `aws configure` with the endpoint, or env vars `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` set to your B2 Application Key ID and Key).
+
+**If CORS for PUT is not fixed:** The app will fall back to uploading via your API. That works for **files under ~4.5 MB** on Vercel; larger PDFs will get “413 Payload Too Large” until B2 CORS allows presigned PUT.
 
 ---
 
