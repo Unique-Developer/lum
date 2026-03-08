@@ -22,7 +22,6 @@ export function UniqueFeaturesProvider({ children }: UniqueFeaturesProviderProps
         <>
           <CursorGlow />
           <LightRays />
-          <ScrollDimming />
         </>
       )}
       <PageTransition>{children}</PageTransition>

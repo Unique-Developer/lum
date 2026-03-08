@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { UniqueFeaturesProvider } from "@/components/providers/UniqueFeaturesProvider";
@@ -15,11 +14,6 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
-});
-const playfairDisplay = Playfair_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-  display: "swap",
 });
 
 const siteUrl = getSiteUrl();
@@ -77,7 +71,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} relative min-h-screen font-sans antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} relative min-h-screen font-sans antialiased`}
       >
         <SmoothScroll>
           <UniqueFeaturesProvider>{children}</UniqueFeaturesProvider>

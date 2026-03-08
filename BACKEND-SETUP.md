@@ -160,35 +160,38 @@ Replace with your actual values.
 
 ### Step 2.6: Configure CORS (for PDF.js and Admin Uploads)
 
-CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) Admin file uploads (presigned PUT from the live site).
+CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) **Admin file uploads** (presigned **PUT** from your site).  
 
-**Option A – B2 Web UI (if your bucket has “Edit as JSON”)**
+**Why you still see “blocked by CORS policy”:**  
+The B2 web UI options (“Share with this one origin”, “Share with every origin”, etc.) only enable **read (GET)** for the S3-compatible API. They do **not** enable **PUT**, so browser uploads from theluminart.com are blocked. To allow PUT you must set CORS via the **S3-compatible API** (e.g. AWS CLI) as below.
 
-1. In B2: **Buckets** → select your bucket → **Bucket Settings** (gear) → **CORS Rules**
-2. Choose **Edit as JSON** and use rules that include **s3_put** (not only s3_get). Example:
+---
 
-```json
-[
-  {
-    "corsRuleName": "allowAll",
-    "allowedOrigins": ["*"],
-    "allowedOperations": ["s3_get", "s3_put"],
-    "allowedHeaders": ["*"],
-    "exposeHeaders": [],
-    "maxAgeSeconds": 3600
-  }
-]
-```
+#### Fix CORS for uploads (step-by-step with AWS CLI)
 
-3. Save. If the UI only allows “all HTTPS origins” and no custom JSON, it may allow reads only; use Option B.
+Do this once; it configures the bucket so `https://theluminart.com` can both read files and upload (PUT) via presigned URLs.
 
-**Option B – AWS CLI (S3-compatible; guarantees PUT works)**
+**1. Install AWS CLI (if you don’t have it)**
 
-If the web UI doesn’t allow PUT, set CORS with the S3-compatible API. Replace `luminart-app`, `us-east-005`, and your B2 key ID/application key.
+- **Windows:** Download and run the MSI from [AWS CLI v2](https://aws.amazon.com/cli/), or in PowerShell: `msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi`
+- **Mac:** `brew install awscli`
+- **Linux:** See [AWS CLI install](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-```bash
-# Create cors.xml (allowed methods must include PUT)
-cat > cors.xml << 'EOF'
+**2. Get your B2 values**
+
+From your `.env.local` or Vercel env (same as in Step 2.3–2.5):
+
+- `B2_APPLICATION_KEY_ID` (e.g. `005e4a65145a7fa0000000001`)
+- `B2_APPLICATION_KEY` (the long secret key)
+- `B2_BUCKET_NAME` (e.g. `luminart-app`)
+- `B2_REGION` (e.g. `us-east-005`)
+- `B2_ENDPOINT` (e.g. `https://s3.us-east-005.backblazeb2.com`)
+
+**3. Create the CORS file**
+
+Create a file named `cors.xml` in a folder you can use in the terminal (e.g. your project folder or Desktop). Put this inside (copy exactly; you can add more `<AllowedOrigin>` lines if you have other domains):
+
+```xml
 <CORSConfiguration>
   <CORSRule>
     <AllowedOrigin>https://theluminart.com</AllowedOrigin>
@@ -201,17 +204,50 @@ cat > cors.xml << 'EOF'
     <MaxAgeSeconds>3600</MaxAgeSeconds>
   </CORSRule>
 </CORSConfiguration>
-EOF
-
-# Set CORS (use your B2_APPLICATION_KEY_ID and B2_APPLICATION_KEY)
-aws s3api put-bucket-cors --bucket luminart-app --cors-configuration file://cors.xml \
-  --endpoint-url https://s3.us-east-005.backblazeb2.com \
-  --region us-east-005
 ```
 
-Configure AWS CLI to use B2 credentials for this endpoint (e.g. `aws configure` with the endpoint, or env vars `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` set to your B2 Application Key ID and Key).
+**4. Run the command (one-time)**
 
-**If CORS for PUT is not fixed:** The app will fall back to uploading via your API. That works for **files under ~4.5 MB** on Vercel; larger PDFs will get “413 Payload Too Large” until B2 CORS allows presigned PUT.
+Use your **B2** key ID and key as AWS credentials **only for this command**, and your B2 bucket/region/endpoint. Replace the placeholders with your real values.
+
+**Windows (PowerShell):**
+
+```powershell
+cd "D:\Project\Lumin Art\lum"
+"$env:AWS_ACCESS_KEY_ID = "YOUR_B2_APPLICATION_KEY_ID"
+"$env:AWS_SECRET_ACCESS_KEY = "YOUR_B2_APPLICATION_KEY"
+aws s3api put-bucket-cors --bucket luminart-app --cors-configuration file://cors.xml --endpoint-url https://s3.us-east-005.backblazeb2.com --region us-east-005
+```
+
+**Mac / Linux (bash):**
+
+```bash
+cd /path/to/your/project
+export AWS_ACCESS_KEY_ID="YOUR_B2_APPLICATION_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="YOUR_B2_APPLICATION_KEY"
+aws s3api put-bucket-cors --bucket luminart-app --cors-configuration file://cors.xml --endpoint-url https://s3.us-east-005.backblazeb2.com --region us-east-005
+```
+
+- Replace `YOUR_B2_APPLICATION_KEY_ID` and `YOUR_B2_APPLICATION_KEY` with the values from step 2.  
+- Replace `luminart-app` and `us-east-005` and the `--endpoint-url` if your bucket/region are different.  
+- The path in `file://cors.xml` is relative to the current directory, so run the command from the folder where `cors.xml` is.
+
+**5. Confirm success**
+
+- If it works, the command finishes with no output.  
+- Wait **1–2 minutes**, then try uploading a catalogue PDF again from https://theluminart.com (admin → edit catalogue → Upload PDF).  
+- If you still see a CORS error, check: (1) bucket name and region match your B2 bucket, (2) no typo in key ID/key, (3) you’re testing from https://theluminart.com (or another origin you put in `cors.xml`).
+
+**6. (Optional) Remove env vars after**
+
+So the keys don’t stay in your shell:
+
+- **PowerShell:** `Remove-Item Env:AWS_ACCESS_KEY_ID; Remove-Item Env:AWS_SECRET_ACCESS_KEY`
+- **Bash:** `unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY`
+
+---
+
+**If you don’t fix CORS:** Uploads **over ~4 MB** will keep failing with a CORS error. Files **under 4 MB** can still use the server fallback (upload via your API).
 
 ---
 

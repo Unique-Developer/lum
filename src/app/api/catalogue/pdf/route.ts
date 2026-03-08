@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
     }
 
     const contentType = res.headers.get("content-type") ?? "application/pdf";
-    const body = res.body;
-    if (!body) {
+    const buffer = await res.arrayBuffer();
+    if (!buffer || buffer.byteLength === 0) {
       return NextResponse.json({ error: "No body" }, { status: 502 });
     }
 
-    return new NextResponse(body, {
+    return new NextResponse(buffer, {
       status: 200,
       headers: {
         "Content-Type": contentType,

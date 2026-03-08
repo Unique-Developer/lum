@@ -8,7 +8,7 @@ import { ParallaxSection } from "@/components/ui/ParallaxSection";
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground">
       <HeroSection />
       <LightHouseLegacySection />
       <ParallaxSection>
