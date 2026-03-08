@@ -10,6 +10,8 @@ export const metadata = {
     "Browse our luxury lighting catalogues. Architectural, technical, and decorative solutions.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function CataloguePage() {
   const catalogues = await getCatalogues();
 

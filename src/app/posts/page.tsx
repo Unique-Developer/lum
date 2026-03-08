@@ -12,6 +12,8 @@ export const metadata = {
     "Insights, updates, and resources — articles, guides, photos, and more from Lumin Art.",
 };
 
+export const dynamic = "force-dynamic";
+
 function getPostType(post: BlogPost): "blog" | "social" {
   return post.postType === "social" ? "social" : "blog";
 }
