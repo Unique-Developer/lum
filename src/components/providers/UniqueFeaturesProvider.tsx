@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { Preloader } from "@/components/ui/Preloader";
 import { CursorGlow } from "@/components/ui/CursorGlow";
 import { LightRays } from "@/components/ui/LightRays";
-import { ScrollDimming } from "@/components/ui/ScrollDimming";
 import { PageTransition } from "./PageTransition";
 
 interface UniqueFeaturesProviderProps {
