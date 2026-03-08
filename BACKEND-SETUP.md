@@ -247,6 +247,27 @@ So the keys don’t stay in your shell:
 
 ---
 
+#### Alternative: Use B2 CLI (if you get "B2 Native CORS rules" error)
+
+If the AWS S3 API fails with *"The bucket contains B2 Native CORS rules. Please use B2 Native API instead"*, use the B2 CLI:
+
+1. Install: `pip install b2` (or see [Backblaze B2 CLI](https://www.backblaze.com/docs/cloud-storage-command-line-tools))
+2. Run `b2 account authorize` with your B2 keyID and applicationKey
+3. From the project folder, run:
+
+   **Windows (PowerShell often breaks the JSON):** Use the Python helper (b2 is a Python package, so Python is available):
+   ```powershell
+   cd "D:\Project\Lumin Art\lum"
+   python set-b2-cors.py
+   ```
+   This passes the JSON correctly. Edit `set-b2-cors.py` to change the bucket name or type (`allPrivate`).
+
+   **Mac/Linux (bash):**
+   ```bash
+   b2 bucket update --cors-rules "$(cat b2-cors-rules.json)" luminart-app allPublic
+   ```
+4. Replace `luminart-app` with your bucket name; use `allPrivate` if your bucket is private
+
 **If you don’t fix CORS:** Uploads **over ~4 MB** will keep failing with a CORS error. Files **under 4 MB** can still use the server fallback (upload via your API).
 
 ---

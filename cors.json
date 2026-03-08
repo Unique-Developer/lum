@@ -1,0 +1,14 @@
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": [
+        "https://theluminart.com",
+        "https://www.theluminart.com",
+        "http://localhost:3000"
+      ],
+      "AllowedMethods": ["GET", "PUT", "HEAD"],
+      "AllowedHeaders": ["*"],
+      "MaxAgeSeconds": 3600
+    }
+  ]
+}

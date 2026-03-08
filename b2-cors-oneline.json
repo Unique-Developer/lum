@@ -1,0 +1,1 @@
+[{"corsRuleName":"luminart-catalogue-uploads","allowedOrigins":["https","http://localhost:3000"],"allowedOperations":["s3_get","s3_put","s3_head"],"allowedHeaders":["*"],"maxAgeSeconds":3600}]
