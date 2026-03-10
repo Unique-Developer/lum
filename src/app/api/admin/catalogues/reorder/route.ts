@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { readCatalogues, writeCatalogues } from "@/lib/storage";
+import { clearCatalogueCache } from "@/lib/catalogue";
 
 export async function PUT(req: Request) {
   const admin = await requireAdmin();
@@ -23,6 +24,7 @@ export async function PUT(req: Request) {
     const merged = [...reordered, ...rest].sort((a, b) => a.order - b.order);
 
     await writeCatalogues(merged);
+    clearCatalogueCache();
     return NextResponse.json(merged);
   } catch (e) {
     console.error(e);

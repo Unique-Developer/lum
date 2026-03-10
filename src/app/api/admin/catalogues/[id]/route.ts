@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { readCatalogues, writeCatalogues } from "@/lib/storage";
 import type { Catalogue } from "@/lib/catalogue";
+import { clearCatalogueCache } from "@/lib/catalogue";
 
 export async function GET(
   _req: Request,
@@ -43,6 +44,7 @@ export async function PUT(
     };
     catalogues[idx] = updated;
     await writeCatalogues(catalogues);
+    clearCatalogueCache();
     return NextResponse.json(updated);
   } catch (e) {
     console.error(e);
@@ -64,5 +66,6 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   await writeCatalogues(filtered);
+  clearCatalogueCache();
   return NextResponse.json({ success: true });
 }

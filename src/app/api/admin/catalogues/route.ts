@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { readCatalogues, writeCatalogues } from "@/lib/storage";
 import type { Catalogue } from "@/lib/catalogue";
+import { clearCatalogueCache } from "@/lib/catalogue";
 
 function slugify(text: string): string {
   return text
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
 
     catalogues.push(newCatalogue);
     await writeCatalogues(catalogues);
+    clearCatalogueCache();
     return NextResponse.json(newCatalogue);
   } catch (e) {
     console.error(e);
