@@ -14,36 +14,50 @@ type FlipbookViewerProps = {
 
 /**
  * Decide how to load the PDF:
- * - R2 URLs (pub-*.r2.dev or custom R2 domain): load directly, CORS is handled by R2.
- * - Legacy B2 URLs: go through the /api/catalogue/pdf proxy.
+ * - Mobile Safari (iPhone/iPad): always proxy R2/B2 via /api/catalogue/pdf (avoids
+ *   cross-origin PDF streaming issues that cause "keeps loading" on iOS).
+ * - Desktop/tablet: load R2 directly for speed; B2 still proxied.
  * - Other external URLs: proxy by full url.
  * - Relative URLs: use as-is.
  */
 function getEffectivePdfUrl(pdfUrl: string): string {
+  const isMobileSafari =
+    typeof navigator !== "undefined" &&
+    /iP(ad|hone|od)/.test(navigator.userAgent) &&
+    /Safari/.test(navigator.userAgent) &&
+    !/Chrome/.test(navigator.userAgent);
+
   if (pdfUrl.startsWith("http://") || pdfUrl.startsWith("https://")) {
     try {
       const u = new URL(pdfUrl);
       const host = u.hostname.toLowerCase();
 
-      // 1) Cloudflare R2 (pub-xxx.r2.dev or custom R2 domain)
       const isR2 = host.endsWith(".r2.dev") || host.includes("r2.dev");
+      const isB2 = host.includes("backblazeb2.com");
+
+      const pathParts = u.pathname.split("/").filter(Boolean);
+      const key =
+        pathParts.length >= 1
+          ? pathParts[0] === "catalogue"
+            ? pathParts.join("/")
+            : pathParts.length >= 2
+              ? pathParts.slice(1).join("/")
+              : pathParts[0]
+          : null;
+
+      // 1) Mobile Safari: proxy R2 and B2 to avoid iOS streaming/CORS issues
+      if (isMobileSafari && (isR2 || isB2) && key) {
+        return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
+      }
+
+      // 2) Desktop/tablet: load R2 directly for speed
       if (isR2) {
         return pdfUrl;
       }
 
-      // 2) Legacy Backblaze B2 – keep using proxy
-      const isB2 = host.includes("backblazeb2.com");
-      if (isB2) {
-        const pathParts = u.pathname.split("/").filter(Boolean);
-        if (pathParts.length >= 1) {
-          const key =
-            pathParts[0] === "catalogue"
-              ? pathParts.join("/")
-              : pathParts.length >= 2
-                ? pathParts.slice(1).join("/")
-                : pathParts[0];
-          return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
-        }
+      // 3) Legacy B2 (non-mobile): use proxy
+      if (isB2 && key) {
+        return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
       }
     } catch {
       // ignore and fall through to proxy by full url
