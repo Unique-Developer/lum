@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
-import { uploadToB2, isB2Configured } from "@/lib/b2";
+import { uploadToR2, isR2Configured } from "@/lib/r2";
 
 const MAX_SIZE = 100 * 1024 * 1024; // 100MB
 const ALLOWED_TYPES = [
@@ -18,9 +18,9 @@ export async function POST(req: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!isB2Configured()) {
+  if (!isR2Configured()) {
     return NextResponse.json(
-      { error: "B2 storage not configured. Set B2_* env variables." },
+      { error: "R2 storage not configured. Set R2_* env variables." },
       { status: 503 }
     );
   }
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
     const key = `${prefix}/${Date.now()}-${safeName}`;
 
-    const url = await uploadToB2(buffer, key, contentType);
+    const url = await uploadToR2(buffer, key, contentType);
     return NextResponse.json({ url, key });
   } catch (e) {
     console.error("Upload error:", e);

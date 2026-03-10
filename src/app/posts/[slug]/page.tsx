@@ -80,63 +80,66 @@ export default async function PostDetailPage({ params }: Props) {
       <SiteHeader />
 
       {social ? (
-        /* Instagram-style social post layout */
-        <article className="px-3 py-6 sm:py-8 md:py-10">
-          <div className="mx-auto max-w-[420px]">
+        /* Social post: single-screen layout — image + text together; side-by-side on large, stacked on mobile */
+        <article className="min-h-0 px-4 py-4 sm:px-6 sm:py-6 lg:flex lg:min-h-[calc(100vh-8rem)] lg:items-center lg:px-8 lg:py-8">
+          <div className="mx-auto w-full max-w-6xl">
             <Link
               href="/posts"
-              className="mb-6 inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground transition-colors"
+              className="mb-3 inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-foreground transition-colors sm:mb-4"
             >
               ← Back to Posts
             </Link>
 
-            <header className="mb-4 flex items-center gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-200 to-primary-300 text-base font-semibold text-primary-900">
-                {post.author.charAt(0).toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold text-foreground">{post.author}</p>
-                <time dateTime={post.publishedAt} className="text-sm text-foreground/50">
-                  {publishedShort}
-                </time>
-              </div>
-            </header>
-
-            {hasMedia && (
-              <div className="mb-4 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-black/[0.02]">
-                <div className="flex snap-x snap-mandatory gap-0 overflow-x-auto">
-                  {post.media!.map((m, i) => (
-                    <div
-                      key={i}
-                      className="relative aspect-square min-w-full shrink-0 snap-center overflow-hidden"
-                    >
-                      {m.type === "image" ? (
-                        <img
-                          src={m.url}
-                          alt={`${post.title} – media ${i + 1}`}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <video
-                          src={m.url}
-                          controls
-                          playsInline
-                          title={`${post.title} – video ${i + 1}`}
-                          className="h-full w-full object-contain bg-black"
-                        />
-                      )}
-                    </div>
-                  ))}
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8 lg:min-h-0">
+              {/* Media: capped height so text stays in view — mobile 40vh, desktop ~60vh in row */}
+              {hasMedia && (
+                <div className="shrink-0 overflow-hidden rounded-2xl border border-foreground/[0.08] bg-black/[0.02] lg:max-h-[min(70vh,560px)] lg:w-[48%] lg:min-w-0">
+                  <div className="flex snap-x snap-mandatory gap-0 overflow-x-auto">
+                    {post.media!.map((m, i) => (
+                      <div
+                        key={i}
+                        className="relative flex min-w-full shrink-0 snap-center items-center justify-center overflow-hidden py-2"
+                      >
+                        {m.type === "image" ? (
+                          <img
+                            src={m.url}
+                            alt={`${post.title} – media ${i + 1}`}
+                            className="h-auto max-h-[40vh] w-auto max-w-full object-contain sm:max-h-[45vh] lg:max-h-[min(68vh,520px)]"
+                          />
+                        ) : (
+                          <video
+                            src={m.url}
+                            controls
+                            playsInline
+                            title={`${post.title} – video ${i + 1}`}
+                            className="h-auto max-h-[40vh] w-auto max-w-full object-contain bg-black sm:max-h-[45vh] lg:max-h-[min(68vh,520px)]"
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="space-y-2">
-              <h1 className="text-lg font-semibold leading-snug text-foreground">
-                {post.title}
-              </h1>
-              <div className="text-sm">
-                <SocialPostContent html={post.content} />
+              {/* Text: always visible on same screen */}
+              <div className="min-w-0 flex-1 space-y-3 lg:max-h-[min(70vh,560px)] lg:overflow-y-auto lg:py-2">
+                <header className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-200 to-primary-300 text-sm font-semibold text-primary-900 sm:h-11 sm:w-11">
+                    {post.author.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-foreground">{post.author}</p>
+                    <time dateTime={post.publishedAt} className="text-xs text-foreground/50 sm:text-sm">
+                      {publishedShort}
+                    </time>
+                  </div>
+                </header>
+                <h1 className="text-lg font-semibold leading-snug text-foreground sm:text-xl lg:text-2xl">
+                  {post.title}
+                </h1>
+                <div className="text-sm text-foreground/85">
+                  <SocialPostContent html={post.content} />
+                </div>
               </div>
             </div>
           </div>
@@ -164,7 +167,7 @@ export default async function PostDetailPage({ params }: Props) {
                         <img
                           src={m.url}
                           alt={`${post.title} – media ${i + 1}`}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain object-center bg-black/[0.04]"
                         />
                       ) : (
                         <video

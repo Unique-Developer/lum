@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
-import { createPresignedUploadUrl, isB2Configured } from "@/lib/b2";
+import { createPresignedUploadUrl, isR2Configured } from "@/lib/r2";
 
 const ALLOWED_TYPES = [
   "application/pdf",
@@ -17,9 +17,9 @@ export async function GET(req: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  if (!isB2Configured()) {
+  if (!isR2Configured()) {
     return NextResponse.json(
-      { error: "B2 storage not configured. Set B2_* env variables." },
+      { error: "R2 storage not configured. Set R2_* env variables." },
       { status: 503 }
     );
   }

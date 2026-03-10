@@ -1,0 +1,58 @@
+[
+  {
+    "id": "architectural-lights",
+    "name": "Architectural Lights",
+    "slug": "architectural-lights",
+    "parentId": null,
+    "order": 0
+  },
+  {
+    "id": "cob-magnetic-lights",
+    "name": "COB Magnetic Lights",
+    "slug": "cob-magnetic-lights",
+    "parentId": "architectural-lights",
+    "order": 0
+  },
+  {
+    "id": "commercial-light",
+    "name": "Commercial Light",
+    "slug": "commercial-light",
+    "parentId": "architectural-lights",
+    "order": 1
+  },
+  {
+    "id": "outdoor-light",
+    "name": "Outdoor Light",
+    "slug": "outdoor-light",
+    "parentId": "architectural-lights",
+    "order": 2
+  },
+  {
+    "id": "decorative-lights",
+    "name": "Decorative Lights",
+    "slug": "decorative-lights",
+    "parentId": null,
+    "order": 1
+  },
+  {
+    "id": "pendant-light",
+    "name": "Pendant Light",
+    "slug": "pendant-light",
+    "parentId": "decorative-lights",
+    "order": 0
+  },
+  {
+    "id": "wall-sconces",
+    "name": "Wall Sconces",
+    "slug": "wall-sconces",
+    "parentId": "decorative-lights",
+    "order": 1
+  },
+  {
+    "id": "floor-lamp",
+    "name": "Floor Lamp",
+    "slug": "floor-lamp",
+    "parentId": "decorative-lights",
+    "order": 2
+  }
+]

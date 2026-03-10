@@ -1,4 +1,4 @@
-# Backend Setup Guide (MongoDB + Backblaze B2 + Resend)
+# Backend Setup Guide (MongoDB + Cloudflare R2 + Resend)
 
 This guide walks you through setting up the backend services for Lumin Art. Complete each section in order. All services offer free tiers suitable for development and small production deployments.
 
@@ -104,66 +104,68 @@ You should see output like `Seeding complete` or similar. If you get connection 
 
 ---
 
-## 2. Backblaze B2 Setup
+## 2. Cloudflare R2 Setup
 
-Backblaze B2 stores PDFs and cover images.
+Cloudflare R2 stores PDFs and cover images. R2 offers 10GB free storage and no egress fees.
 
 ### Step 2.1: Create an Account
 
-1. Go to [backblaze.com/b2](https://www.backblaze.com/b2/cloud-storage.html)
-2. Click **Sign Up** (or **Sign In**)
-3. Complete registration and verify your email
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com)
+2. Sign up or sign in with your Cloudflare account
 
-### Step 2.2: Create a Bucket
+### Step 2.2: Create an R2 Bucket
 
-1. After logging in, open **Buckets** in the sidebar
-2. Click **Create a Bucket**
-3. Set:
-   - **Bucket Name:** e.g. `luminart-files` (must be globally unique)
-   - **Files in Bucket:** Public
-   - **Default Encryption:** Enabled (recommended)
-4. Click **Create a Bucket**
+1. In the left sidebar, go to **R2 Object Storage**
+2. Click **Create bucket**
+3. Enter a **Bucket name** (e.g. `luminart-files`)
+4. Choose a location (optional)
+5. Click **Create bucket**
 
-### Step 2.3: Create Application Keys
+### Step 2.3: Enable Public Access
 
-1. Open **App Keys** in the left sidebar
-2. Click **Add a New Application Key**
-3. Use:
-   - **Name of Key:** e.g. `luminart-app`
-   - **Permissions:** Read and Write (or Full Account for simplicity)
-4. Click **Create New Key**
-5. **Important:** Copy both:
-   - `keyID` (Application Key ID)
-   - `applicationKey` (shown once; save it securely)
+1. Open your bucket
+2. Go to **Settings**
+3. Under **Public access**, click **Allow Access**
+4. Choose either:
+   - **R2.dev subdomain** – Use the generated URL (e.g. `https://pub-xxxx.r2.dev`) – suitable for development and small production
+   - **Custom domain** – Connect a domain you own (e.g. `files.theluminart.com`) for production with better performance
+5. Copy the **Public Bucket URL** – you'll need it for `R2_PUBLIC_BASE_URL`
 
-### Step 2.4: Find Your Endpoint and Region
+### Step 2.4: Create API Token
 
-- Region format: e.g. `us-west-004`, `eu-central-003`
-- Endpoint format: `https://s3.<region>.backblazeb2.com`
-- Example: `https://s3.us-west-004.backblazeb2.com`
+1. Go to **R2** → **Manage R2 API Tokens** (or **Overview** → **Manage API Tokens**)
+2. Click **Create API token**
+3. Name it (e.g. `luminart-app`)
+4. Permissions: **Object Read & Write**
+5. Optional: restrict to your bucket
+6. Click **Create API Token**
+7. **Important:** Copy the **Access Key ID** and **Secret Access Key** (secret is shown only once)
 
-You can confirm region in the bucket URL or B2 dashboard.
+### Step 2.5: Get Your Account ID
 
-### Step 2.5: Add to `.env.local`
+- In the R2 Overview, find **Account ID** in the right sidebar
+- Or use the URL: `https://dash.cloudflare.com/<ACCOUNT_ID>/r2`
+
+### Step 2.6: Add to `.env.local`
 
 Add these to `.env.local`:
 
 ```
-B2_APPLICATION_KEY_ID=your_key_id
-B2_APPLICATION_KEY=your_application_key
-B2_BUCKET_NAME=luminart-files
-B2_REGION=us-west-004
-B2_ENDPOINT=https://s3.us-west-004.backblazeb2.com
+R2_ACCOUNT_ID=your_account_id
+R2_ACCESS_KEY_ID=your_access_key_id
+R2_SECRET_ACCESS_KEY=your_secret_access_key
+R2_BUCKET_NAME=luminart-files
+R2_PUBLIC_BASE_URL=https://pub-xxxx.r2.dev
 ```
 
-Replace with your actual values.
+Replace with your actual values. `R2_PUBLIC_BASE_URL` is the Public Bucket URL from Step 2.3 (no trailing slash).
 
-### Step 2.6: Configure CORS (for PDF.js and Admin Uploads)
+### Step 2.7: Configure CORS (if needed for uploads over 4 MB)
 
-CORS must allow: (1) PDFs to load in the browser (PDF.js), (2) **Admin file uploads** (presigned **PUT** from your site).  
+R2 buckets with public access often work without extra CORS config. If uploads **over 4 MB** fail with a CORS error, configure CORS for presigned PUT uploads.  
 
 **Why you still see “blocked by CORS policy”:**  
-The B2 web UI options (“Share with this one origin”, “Share with every origin”, etc.) only enable **read (GET)** for the S3-compatible API. They do **not** enable **PUT**, so browser uploads from theluminart.com are blocked. To allow PUT you must set CORS via the **S3-compatible API** (e.g. AWS CLI) as below.
+Use the AWS CLI below to set CORS and allow PUT (“Share with this one origin”, “Share with every origin”, etc.) only enable **read (GET)** for the S3-compatible API. They do **not** enable **PUT**, so browser uploads from theluminart.com are blocked. To allow PUT you must set CORS via the **S3-compatible API** (e.g. AWS CLI) as below.
 
 ---
 
@@ -177,66 +179,60 @@ Do this once; it configures the bucket so `https://theluminart.com` can both rea
 - **Mac:** `brew install awscli`
 - **Linux:** See [AWS CLI install](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-**2. Get your B2 values**
+**2. Get your R2 values**
 
-From your `.env.local` or Vercel env (same as in Step 2.3–2.5):
+From your `.env.local`: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_ACCOUNT_ID`
 
-- `B2_APPLICATION_KEY_ID` (e.g. `005e4a65145a7fa0000000001`)
-- `B2_APPLICATION_KEY` (the long secret key)
-- `B2_BUCKET_NAME` (e.g. `luminart-app`)
-- `B2_REGION` (e.g. `us-east-005`)
-- `B2_ENDPOINT` (e.g. `https://s3.us-east-005.backblazeb2.com`)
+**3. Create the CORS file (AWS CLI requires JSON)**
 
-**3. Create the CORS file**
+Create a file named `cors.json` in a folder you can use in the terminal (e.g. your project folder). Put this inside (edit `AllowedOrigins` if needed):
 
-Create a file named `cors.xml` in a folder you can use in the terminal (e.g. your project folder or Desktop). Put this inside (copy exactly; you can add more `<AllowedOrigin>` lines if you have other domains):
-
-```xml
-<CORSConfiguration>
-  <CORSRule>
-    <AllowedOrigin>https://theluminart.com</AllowedOrigin>
-    <AllowedOrigin>https://www.theluminart.com</AllowedOrigin>
-    <AllowedOrigin>http://localhost:3000</AllowedOrigin>
-    <AllowedMethod>GET</AllowedMethod>
-    <AllowedMethod>PUT</AllowedMethod>
-    <AllowedMethod>HEAD</AllowedMethod>
-    <AllowedHeader>*</AllowedHeader>
-    <MaxAgeSeconds>3600</MaxAgeSeconds>
-  </CORSRule>
-</CORSConfiguration>
+```json
+{
+  "CORSRules": [
+    {
+      "AllowedOrigins": [
+        "https://theluminart.com",
+        "https://www.theluminart.com",
+        "http://localhost:3000"
+      ],
+      "AllowedMethods": ["GET", "PUT", "HEAD"],
+      "AllowedHeaders": ["*"],
+      "MaxAgeSeconds": 3600
+    }
+  ]
+}
 ```
 
 **4. Run the command (one-time)**
 
-Use your **B2** key ID and key as AWS credentials **only for this command**, and your B2 bucket/region/endpoint. Replace the placeholders with your real values.
+Use your R2 credentials. Replace placeholders with values from `.env.local`:
 
 **Windows (PowerShell):**
 
 ```powershell
 cd "D:\Project\Lumin Art\lum"
-"$env:AWS_ACCESS_KEY_ID = "YOUR_B2_APPLICATION_KEY_ID"
-"$env:AWS_SECRET_ACCESS_KEY = "YOUR_B2_APPLICATION_KEY"
-aws s3api put-bucket-cors --bucket luminart-app --cors-configuration file://cors.xml --endpoint-url https://s3.us-east-005.backblazeb2.com --region us-east-005
+$env:AWS_ACCESS_KEY_ID = "YOUR_R2_ACCESS_KEY_ID"
+$env:AWS_SECRET_ACCESS_KEY = "YOUR_R2_SECRET_ACCESS_KEY"
+aws s3api put-bucket-cors --bucket YOUR_R2_BUCKET_NAME --cors-configuration file://cors.json --endpoint-url "https://YOUR_R2_ACCOUNT_ID.r2.cloudflarestorage.com" --region auto
 ```
 
 **Mac / Linux (bash):**
 
 ```bash
 cd /path/to/your/project
-export AWS_ACCESS_KEY_ID="YOUR_B2_APPLICATION_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="YOUR_B2_APPLICATION_KEY"
-aws s3api put-bucket-cors --bucket luminart-app --cors-configuration file://cors.xml --endpoint-url https://s3.us-east-005.backblazeb2.com --region us-east-005
+export AWS_ACCESS_KEY_ID="YOUR_R2_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="YOUR_R2_SECRET_ACCESS_KEY"
+aws s3api put-bucket-cors --bucket YOUR_R2_BUCKET_NAME --cors-configuration file://cors.json --endpoint-url "https://YOUR_R2_ACCOUNT_ID.r2.cloudflarestorage.com" --region auto
 ```
 
-- Replace `YOUR_B2_APPLICATION_KEY_ID` and `YOUR_B2_APPLICATION_KEY` with the values from step 2.  
-- Replace `luminart-app` and `us-east-005` and the `--endpoint-url` if your bucket/region are different.  
-- The path in `file://cors.xml` is relative to the current directory, so run the command from the folder where `cors.xml` is.
+- Endpoint: `https://<R2_ACCOUNT_ID>.r2.cloudflarestorage.com`
 
 **5. Confirm success**
 
 - If it works, the command finishes with no output.  
 - Wait **1–2 minutes**, then try uploading a catalogue PDF again from https://theluminart.com (admin → edit catalogue → Upload PDF).  
-- If you still see a CORS error, check: (1) bucket name and region match your B2 bucket, (2) no typo in key ID/key, (3) you’re testing from https://theluminart.com (or another origin you put in `cors.xml`).
+- If you still see a CORS error, check: (1) bucket name and region match your R2 bucket, (2) no typo in key ID/key, (3) you’re testing from https://theluminart.com (or another origin you put in `cors.json`).
 
 **6. (Optional) Remove env vars after**
 
@@ -247,28 +243,10 @@ So the keys don’t stay in your shell:
 
 ---
 
-#### Alternative: Use B2 CLI (if you get "B2 Native CORS rules" error)
+#### Note
 
-If the AWS S3 API fails with *"The bucket contains B2 Native CORS rules. Please use B2 Native API instead"*, use the B2 CLI:
 
-1. Install: `pip install b2` (or see [Backblaze B2 CLI](https://www.backblaze.com/docs/cloud-storage-command-line-tools))
-2. Run `b2 account authorize` with your B2 keyID and applicationKey
-3. From the project folder, run:
-
-   **Windows (PowerShell often breaks the JSON):** Use the Python helper (b2 is a Python package, so Python is available):
-   ```powershell
-   cd "D:\Project\Lumin Art\lum"
-   python set-b2-cors.py
-   ```
-   This passes the JSON correctly. Edit `set-b2-cors.py` to change the bucket name or type (`allPrivate`).
-
-   **Mac/Linux (bash):**
-   ```bash
-   b2 bucket update --cors-rules "$(cat b2-cors-rules.json)" luminart-app allPublic
-   ```
-4. Replace `luminart-app` with your bucket name; use `allPrivate` if your bucket is private
-
-**If you don’t fix CORS:** Uploads **over ~4 MB** will keep failing with a CORS error. Files **under 4 MB** can still use the server fallback (upload via your API).
+Files **under 4 MB** can use the server fallback (upload via your API) and do not need CORS.
 
 ---
 
@@ -338,7 +316,7 @@ npm uninstall nodemailer @types/nodemailer
    ```
 3. Visit `http://localhost:3000` and check:
    - Blog/catalogue pages load (MongoDB)
-   - PDFs/images load (B2)
+   - PDFs/images load (R2)
    - Contact form sends a test email (Resend)
 
 ---
@@ -361,12 +339,12 @@ For Vercel:
 MONGODB_URI=mongodb+srv://user:pass@cluster.xxxxx.mongodb.net/luminart?retryWrites=true&w=majority
 MONGODB_DB=luminart
 
-# Backblaze B2
-B2_APPLICATION_KEY_ID=your_key_id
-B2_APPLICATION_KEY=your_application_key
-B2_BUCKET_NAME=luminart-files
-B2_REGION=us-west-004
-B2_ENDPOINT=https://s3.us-west-004.backblazeb2.com
+# Cloudflare R2
+R2_ACCOUNT_ID=your_account_id
+R2_ACCESS_KEY_ID=your_access_key_id
+R2_SECRET_ACCESS_KEY=your_secret_access_key
+R2_BUCKET_NAME=luminart-files
+R2_PUBLIC_BASE_URL=https://pub-xxxx.r2.dev
 
 # Resend
 RESEND_API_KEY=re_xxxxx
@@ -378,3 +356,4 @@ ADMIN_EMAIL=admin@luminart.com
 ADMIN_PASSWORD=admin123
 JWT_SECRET=change-in-production
 ```
+

@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const SCALE = 1.2;
-const JPEG_QUALITY = 0.8;
+const SCALE = 1.0;
+const JPEG_QUALITY = 0.75;
 
 type FlipbookViewerProps = {
   pdfUrl: string;
@@ -13,13 +13,47 @@ type FlipbookViewerProps = {
 };
 
 /**
- * Use same-origin proxy for external PDF URLs to avoid CORS on mobile.
- * B2 URLs fail on mobile Safari due to strict CORS; proxying fixes this.
+ * Decide how to load the PDF:
+ * - R2 URLs (pub-*.r2.dev or custom R2 domain): load directly, CORS is handled by R2.
+ * - Legacy B2 URLs: go through the /api/catalogue/pdf proxy.
+ * - Other external URLs: proxy by full url.
+ * - Relative URLs: use as-is.
  */
 function getEffectivePdfUrl(pdfUrl: string): string {
   if (pdfUrl.startsWith("http://") || pdfUrl.startsWith("https://")) {
+    try {
+      const u = new URL(pdfUrl);
+      const host = u.hostname.toLowerCase();
+
+      // 1) Cloudflare R2 (pub-xxx.r2.dev or custom R2 domain)
+      const isR2 = host.endsWith(".r2.dev") || host.includes("r2.dev");
+      if (isR2) {
+        return pdfUrl;
+      }
+
+      // 2) Legacy Backblaze B2 – keep using proxy
+      const isB2 = host.includes("backblazeb2.com");
+      if (isB2) {
+        const pathParts = u.pathname.split("/").filter(Boolean);
+        if (pathParts.length >= 1) {
+          const key =
+            pathParts[0] === "catalogue"
+              ? pathParts.join("/")
+              : pathParts.length >= 2
+                ? pathParts.slice(1).join("/")
+                : pathParts[0];
+          return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
+        }
+      }
+    } catch {
+      // ignore and fall through to proxy by full url
+    }
+
+    // 3) Fallback for other external URLs
     return `/api/catalogue/pdf?url=${encodeURIComponent(pdfUrl)}`;
   }
+
+  // 4) Relative / same-origin URLs
   return pdfUrl;
 }
 
@@ -39,23 +73,8 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
     async (pageNum: number): Promise<string | null> => {
       if (pageNum < 1 || pageNum > totalPages) return null;
 
-      const pdfjsLib = await import("pdfjs-dist");
-      if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-        // Use jsDelivr which mirrors the installed npm version of pdfjs-dist
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
-      }
-
-      let doc = pdfDocRef.current;
-      if (!doc) {
-        try {
-          doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
-          pdfDocRef.current = doc;
-        } catch (e) {
-          console.warn("PDF load failed:", e);
-          setError("Catalogue PDF not available.");
-          return null;
-        }
-      }
+      const doc = pdfDocRef.current;
+      if (!doc) return null;
 
       const page = await doc.getPage(pageNum);
       const viewport = page.getViewport({ scale: SCALE });
@@ -90,7 +109,9 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
     (async () => {
       try {
         const pdfjsLib = await import("pdfjs-dist");
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+        if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+        }
         const doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
         if (cancelled) return;
         pdfDocRef.current = doc;

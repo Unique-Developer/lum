@@ -59,11 +59,11 @@ In **Project Settings → Environment Variables**, add these for **Production** 
 | `ADMIN_PASSWORD_HASH` | bcrypt hash: `node scripts/generate-admin-hash.js yourpassword` — use this in prod, not plain password | Yes |
 | `MONGODB_URI` | MongoDB Atlas connection string (same as in `.env.local`) | Yes |
 | `MONGODB_DB` | Database name (e.g. `luminart`) | Yes |
-| `B2_APPLICATION_KEY_ID` | Backblaze B2 Application Key ID | Yes (for admin uploads) |
-| `B2_APPLICATION_KEY` | Backblaze B2 Application Key | Yes |
-| `B2_BUCKET_NAME` | B2 bucket name | Yes |
-| `B2_REGION` | B2 region (e.g. `us-east-005`) | Yes |
-| `B2_ENDPOINT` | B2 S3-compatible endpoint URL | Yes |
+| `R2_ACCOUNT_ID` | Cloudflare account ID | Yes (for admin uploads) |
+| `R2_ACCESS_KEY_ID` | R2 API token access key ID | Yes |
+| `R2_SECRET_ACCESS_KEY` | R2 API token secret | Yes |
+| `R2_BUCKET_NAME` | R2 bucket name | Yes |
+| `R2_PUBLIC_BASE_URL` | Public URL (e.g. `https://pub-xxx.r2.dev` or custom domain) | Yes |
 | `RESEND_API_KEY` | Resend API key (for contact form) | Yes (if contact form needed) |
 | `RESEND_FROM_EMAIL` | From address (e.g. `onboarding@resend.dev` or your verified domain) | If using contact form |
 | `CONTACT_EMAIL` | Email where contact form submissions go | If using contact form |
@@ -96,9 +96,9 @@ If the build succeeds locally, Vercel will build it successfully. Push to your m
 
 ## 5. Content Storage Note
 
-The site uses **MongoDB Atlas** for catalogues and blog content, and **Backblaze B2** for PDFs and cover images. On Vercel:
+The site uses **MongoDB Atlas** for catalogues and blog content, and **Cloudflare R2** for PDFs and cover images. On Vercel:
 
-- **Reads and writes** both work – MongoDB and B2 are external services, so admin uploads and edits persist.
+- **Reads and writes** both work – MongoDB and R2 are external services, so admin uploads and edits persist.
 - Ensure **MongoDB Network Access** allows `0.0.0.0/0` (or add Vercel IPs) so serverless functions can connect.
 
 ---

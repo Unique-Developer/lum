@@ -28,7 +28,7 @@ export function SiteFooter() {
         }}
       />
 
-      <div className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16">
+      <div className="relative mx-auto max-w-6xl px-4 py-12 pb-16 sm:px-6 md:py-16 md:pb-20">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto] lg:gap-16">
           {/* Brand column */}
           <div className="space-y-4">
@@ -76,7 +76,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/10 pt-8 md:flex-row md:pt-10">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-foreground/10 pt-8 pb-[env(safe-area-inset-bottom)] md:flex-row md:pt-10">
           <p className="text-center text-sm text-foreground/50 md:text-left">
             © {new Date().getFullYear()} Lumin Art. All rights reserved.
           </p>

@@ -10,7 +10,17 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "**.r2.dev",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "**.backblazeb2.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.theluminart.com",
         pathname: "/**",
       },
     ],
