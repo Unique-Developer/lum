@@ -54,11 +54,7 @@ export default async function CatalogueDetailPage({ params }: Props) {
             {catalogue.description}
           </p>
 
-          <FlipbookViewer
-            pdfUrl={catalogue.pdfUrl}
-            pageCount={catalogue.pageCount}
-            title={catalogue.title}
-          />
+          <FlipbookViewer pdfUrl={catalogue.pdfUrl} title={catalogue.title} />
         </div>
       </section>
 

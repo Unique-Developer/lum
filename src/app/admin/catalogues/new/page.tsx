@@ -16,7 +16,6 @@ export default function NewCataloguePage() {
     description: "",
     coverImage: "",
     pdfUrl: "",
-    pageCount: 0,
   });
 
   if (!token) {
@@ -131,19 +130,6 @@ export default function NewCataloguePage() {
                   buttonLabel="Upload PDF"
                 />
               </div>
-            </div>
-            <div>
-              <label htmlFor="pageCount" className="block text-sm font-medium text-foreground">
-                Page count
-              </label>
-              <input
-                id="pageCount"
-                type="number"
-                min={0}
-                value={form.pageCount || ""}
-                onChange={(e) => setForm((f) => ({ ...f, pageCount: parseInt(e.target.value, 10) || 0 }))}
-                className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
-              />
             </div>
             <div className="flex gap-4">
               <button

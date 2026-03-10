@@ -5,12 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const SCALE = 1.0;
 const JPEG_QUALITY = 0.75;
-
-type FlipbookViewerProps = {
-  pdfUrl: string;
-  pageCount: number;
-  title: string;
-};
+const SWIPE_THRESHOLD_PX = 60;
 
 /**
  * Decide how to load the PDF:
@@ -71,17 +66,22 @@ function getEffectivePdfUrl(pdfUrl: string): string {
   return pdfUrl;
 }
 
-export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps) {
+type FlipbookViewerProps = {
+  pdfUrl: string;
+  title: string;
+};
+
+export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   const effectivePdfUrl = getEffectivePdfUrl(pdfUrl);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(50);
   const [pageCache, setPageCache] = useState<Record<number, string>>({});
   const [docReady, setDocReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingPage, setLoadingPage] = useState<number | null>(1);
   const pdfDocRef = useRef<import("pdfjs-dist").PDFDocumentProxy | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
-
-  const totalPages = Math.min(pageCount, 50);
+  const touchStartX = useRef<number>(0);
 
   const loadPage = useCallback(
     async (pageNum: number): Promise<string | null> => {
@@ -101,7 +101,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
       const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
       return dataUrl;
     },
-    [effectivePdfUrl, totalPages]
+    [totalPages]
   );
 
   const ensurePage = useCallback(
@@ -129,6 +129,8 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
         const doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
         if (cancelled) return;
         pdfDocRef.current = doc;
+        const numPages = Math.min(doc.numPages, 50);
+        setTotalPages(numPages);
         setDocReady(true);
       } catch (e) {
         if (!cancelled) {
@@ -152,6 +154,17 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
   const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!e.changedTouches[0]) return;
+    const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+    if (deltaX > SWIPE_THRESHOLD_PX) goNext();
+    else if (deltaX < -SWIPE_THRESHOLD_PX) goPrev();
+  };
+
   const currentImage = pageCache[currentPage];
   const isLoading = !docReady && !error;
   const isPageLoading = loadingPage !== null && !currentImage;
@@ -167,12 +180,13 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
   return (
     <div className="mx-auto w-full max-w-4xl px-0 sm:px-2">
       <div
-        className="relative flex min-h-[260px] w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-foreground/5 overscroll-contain"
+        className="relative flex min-h-[260px] touch-pan-y w-full max-w-full cursor-grab active:cursor-grabbing items-center justify-center overflow-hidden rounded-xl bg-foreground/5 overscroll-contain"
         style={{
           aspectRatio: "3/4",
-          // More room on small screens (mobile browsers have larger UI chrome)
           maxHeight: "min(76vh, calc(100svh - 220px))",
         }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         <AnimatePresence mode="wait">
           {error ? (
@@ -187,7 +201,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
                 This catalogue will be available once the admin uploads the PDF.
               </p>
               <div className="mt-4 flex gap-4">
-                {[...Array(Math.min(pageCount, 6)).keys()].map((i) => (
+                {[...Array(6).keys()].map((i) => (
                   <div
                     key={i}
                     className="h-24 w-16 rounded border border-foreground/10 bg-foreground/5"
