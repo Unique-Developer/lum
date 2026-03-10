@@ -50,7 +50,9 @@ export default async function CatalogueDetailPage({ params }: Props) {
           <h1 className="mb-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             {catalogue.title}
           </h1>
-          <p className="mb-6 text-foreground/70 sm:mb-12">{catalogue.description}</p>
+          <p className="mb-6 text-sm text-foreground/70 sm:mb-12 sm:text-base">
+            {catalogue.description}
+          </p>
 
           <FlipbookViewer
             pdfUrl={catalogue.pdfUrl}

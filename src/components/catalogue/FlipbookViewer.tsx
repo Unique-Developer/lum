@@ -153,10 +153,11 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
   return (
     <div className="mx-auto w-full max-w-4xl px-0 sm:px-2">
       <div
-        className="relative flex min-h-[280px] w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-foreground/5"
+        className="relative flex min-h-[260px] w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-foreground/5 overscroll-contain"
         style={{
           aspectRatio: "3/4",
-          maxHeight: "min(70vh, calc(100svh - 280px))",
+          // More room on small screens (mobile browsers have larger UI chrome)
+          maxHeight: "min(76vh, calc(100svh - 220px))",
         }}
       >
         <AnimatePresence mode="wait">
@@ -215,7 +216,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
           <button
             onClick={goPrev}
             disabled={currentPage <= 1}
-            className="rounded-lg border border-foreground/20 px-6 py-2 font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="rounded-lg border border-foreground/20 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:cursor-not-allowed disabled:opacity-40 sm:px-6 sm:py-2 sm:text-base"
           >
             ← Previous
           </button>
@@ -225,7 +226,7 @@ export function FlipbookViewer({ pdfUrl, pageCount, title }: FlipbookViewerProps
           <button
             onClick={goNext}
             disabled={currentPage >= totalPages}
-            className="rounded-lg border border-foreground/20 px-6 py-2 font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="rounded-lg border border-foreground/20 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5 disabled:cursor-not-allowed disabled:opacity-40 sm:px-6 sm:py-2 sm:text-base"
           >
             Next →
           </button>

@@ -19,18 +19,18 @@ export default async function CataloguePage() {
     <main className="min-h-screen bg-background">
       <SiteHeader />
 
-      <section className="px-6 py-16 md:py-24">
+      <section className="px-4 py-10 sm:px-6 sm:py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+          <div className="mb-10 text-center sm:mb-16">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-5xl">
               Catalogues
             </h1>
-            <p className="mt-4 text-lg text-foreground/70">
+            <p className="mt-3 text-base text-foreground/70 sm:mt-4 sm:text-lg">
               Explore our collections. Click to view in flipbook.
             </p>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {catalogues.map((cat) => (
               <Link
                 key={cat.id}
@@ -50,8 +50,8 @@ export default async function CataloguePage() {
                     </div>
                   )}
                 </div>
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold tracking-tight text-foreground group-hover:text-primary-main transition-colors">
+                <div className="p-4 sm:p-6">
+                  <h2 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary-main sm:text-xl">
                     {cat.title}
                   </h2>
                   <p className="mt-2 text-sm text-foreground/70 line-clamp-2">
