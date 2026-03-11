@@ -48,6 +48,18 @@ export default function AdminDashboardPage() {
           <p className="mt-2 text-foreground/70">Manage catalogues and posts.</p>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <Link
+              href="/admin/categories"
+              className="block rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 transition-all hover:border-primary-200 hover:shadow-lg"
+            >
+              <h2 className="text-xl font-semibold tracking-tight text-foreground">Categories</h2>
+              <p className="mt-2 text-sm text-foreground/70">
+                Manage categories and subcategories (Architectural, Decorative, etc.).
+              </p>
+              <span className="mt-4 inline-flex text-sm font-medium text-primary-main">
+                Manage categories →
+              </span>
+            </Link>
+            <Link
               href="/admin/catalogues"
               className="block rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 transition-all hover:border-primary-200 hover:shadow-lg"
             >

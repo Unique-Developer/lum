@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cob-light",
+    "name": "COB Light",
+    "slug": "cob-light",
+    "categoryId": "architectural-lighting",
+    "order": 0
+  },
+  {
+    "id": "track-light",
+    "name": "Track Light",
+    "slug": "track-light",
+    "categoryId": "architectural-lighting",
+    "order": 1
+  },
+  {
+    "id": "pendant-light",
+    "name": "Pendant Light",
+    "slug": "pendant-light",
+    "categoryId": "decorative-lighting",
+    "order": 0
+  },
+  {
+    "id": "wall-sconces",
+    "name": "Wall Sconces",
+    "slug": "wall-sconces",
+    "categoryId": "decorative-lighting",
+    "order": 1
+  }
+]

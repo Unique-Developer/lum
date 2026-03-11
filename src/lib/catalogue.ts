@@ -8,6 +8,7 @@ export type Catalogue = {
   pdfUrl: string;
   pageCount: number;
   order: number;
+  subcategoryId?: string;
 };
 
 // Simple in-memory cache to avoid hitting MongoDB on every request.
@@ -41,4 +42,9 @@ export function clearCatalogueCache() {
 export async function getCatalogueById(id: string): Promise<Catalogue | undefined> {
   const catalogues = await getCatalogues();
   return catalogues.find((c) => c.id === id);
+}
+
+export async function getCataloguesBySubcategory(subcategoryId: string): Promise<Catalogue[]> {
+  const catalogues = await getCatalogues();
+  return catalogues.filter((c) => c.subcategoryId === subcategoryId);
 }

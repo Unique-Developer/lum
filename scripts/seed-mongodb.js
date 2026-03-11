@@ -30,6 +30,8 @@ async function main() {
 
   const dataDir = path.join(process.cwd(), "src", "data");
   let catalogues = [];
+  let categories = [];
+  let subcategories = [];
   let posts = [];
 
   try {
@@ -40,6 +42,26 @@ async function main() {
     }
   } catch (e) {
     console.warn("No catalogues.json or parse error:", e.message);
+  }
+
+  try {
+    const catPath = path.join(dataDir, "categories.json");
+    if (fs.existsSync(catPath)) {
+      categories = JSON.parse(fs.readFileSync(catPath, "utf-8"));
+      console.log(`Loaded ${categories.length} categories`);
+    }
+  } catch (e) {
+    console.warn("No categories.json or parse error:", e.message);
+  }
+
+  try {
+    const subPath = path.join(dataDir, "subcategories.json");
+    if (fs.existsSync(subPath)) {
+      subcategories = JSON.parse(fs.readFileSync(subPath, "utf-8"));
+      console.log(`Loaded ${subcategories.length} subcategories`);
+    }
+  } catch (e) {
+    console.warn("No subcategories.json or parse error:", e.message);
   }
 
   try {
@@ -55,6 +77,18 @@ async function main() {
   const client = new MongoClient(uri);
   await client.connect();
   const db = client.db(dbName);
+
+  if (categories.length > 0) {
+    await db.collection("categories").deleteMany({});
+    await db.collection("categories").insertMany(categories);
+    console.log("Seeded categories");
+  }
+
+  if (subcategories.length > 0) {
+    await db.collection("subcategories").deleteMany({});
+    await db.collection("subcategories").insertMany(subcategories);
+    console.log("Seeded subcategories");
+  }
 
   if (catalogues.length > 0) {
     await db.collection("catalogues").deleteMany({});

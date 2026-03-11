@@ -41,6 +41,7 @@ export async function PUT(
       pdfUrl: body.pdfUrl !== undefined ? String(body.pdfUrl).trim() : current.pdfUrl,
       pageCount: body.pageCount !== undefined ? Number(body.pageCount) : current.pageCount,
       order: body.order !== undefined ? Number(body.order) : current.order,
+      subcategoryId: body.subcategoryId !== undefined ? (body.subcategoryId ? String(body.subcategoryId).trim() : undefined) : current.subcategoryId,
     };
     catalogues[idx] = updated;
     await writeCatalogues(catalogues);

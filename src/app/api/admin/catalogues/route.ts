@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, description, coverImage, pdfUrl, pageCount = 0 } = body;
+    const { title, description, coverImage, pdfUrl, pageCount = 0, subcategoryId } = body;
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
     }
@@ -47,6 +47,7 @@ export async function POST(req: Request) {
       pdfUrl: String(pdfUrl ?? "").trim(),
       pageCount: Number(pageCount) || 0,
       order: maxOrder + 1,
+      subcategoryId: subcategoryId ? String(subcategoryId).trim() || undefined : undefined,
     };
 
     catalogues.push(newCatalogue);

@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { getCatalogues } from "@/lib/catalogue";
-import { CatalogCoverImage } from "@/components/catalogue/CatalogCoverImage";
+import { getCategories } from "@/lib/categories";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 
@@ -13,7 +12,7 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function CataloguePage() {
-  const catalogues = await getCatalogues();
+  const categories = await getCategories();
 
   return (
     <main className="min-h-screen bg-background">
@@ -26,39 +25,28 @@ export default async function CataloguePage() {
               Catalogues
             </h1>
             <p className="mt-3 text-base text-foreground/70 sm:mt-4 sm:text-lg">
-              Explore our collections. Click to view in flipbook.
+              Choose a category to explore our lighting collections.
             </p>
           </div>
 
           <div className="grid gap-5 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {catalogues.map((cat) => (
+            {categories.map((cat) => (
               <Link
                 key={cat.id}
-                href={`/catalogue/${cat.id}`}
+                href={`/catalogue/${cat.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] transition-all duration-300 hover:border-primary-200 hover:shadow-xl"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
-                  {cat.coverImage ? (
-                    <CatalogCoverImage
-                      src={cat.coverImage}
-                      alt={cat.title}
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-primary-main/60 text-6xl font-light">
-                      {cat.title.charAt(0)}
-                    </div>
-                  )}
+                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
+                  <span className="text-6xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
+                    {cat.name.charAt(0)}
+                  </span>
                 </div>
                 <div className="p-4 sm:p-6">
                   <h2 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary-main sm:text-xl">
-                    {cat.title}
+                    {cat.name}
                   </h2>
-                  <p className="mt-2 text-sm text-foreground/70 line-clamp-2">
-                    {cat.description}
-                  </p>
                   <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary-main">
-                    View flipbook
+                    View subcategories
                     <span className="transition-transform group-hover:translate-x-1">→</span>
                   </span>
                 </div>
@@ -66,9 +54,9 @@ export default async function CataloguePage() {
             ))}
           </div>
 
-          {catalogues.length === 0 && (
+          {categories.length === 0 && (
             <div className="py-20 text-center text-foreground/60">
-              <p>Catalogues will appear here once published.</p>
+              <p>Categories will appear here once configured in admin.</p>
             </div>
           )}
         </div>

@@ -14,6 +14,7 @@ type Catalogue = {
   pdfUrl: string;
   pageCount: number;
   order: number;
+  subcategoryId?: string;
 };
 
 export default function EditCataloguePage() {
@@ -25,15 +26,24 @@ export default function EditCataloguePage() {
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
   const [form, setForm] = useState<Catalogue | null>(null);
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [subcategories, setSubcategories] = useState<{ id: string; name: string; categoryId: string }[]>([]);
 
   useEffect(() => {
     if (!token) {
       router.replace("/admin");
       return;
     }
-    fetch(`/api/admin/catalogues/${id}`, { headers: getHeaders() })
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then(setForm)
+    Promise.all([
+      fetch(`/api/admin/catalogues/${id}`, { headers: getHeaders() }).then((r) => (r.ok ? r.json() : Promise.reject())),
+      fetch("/api/admin/categories", { headers: getHeaders() }).then((r) => (r.ok ? r.json() : [])),
+      fetch("/api/admin/subcategories", { headers: getHeaders() }).then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([cat, cats, subs]) => {
+        setForm(cat);
+        setCategories(cats);
+        setSubcategories(subs);
+      })
       .catch(() => router.replace("/admin"))
       .finally(() => setFetching(false));
   }, [token, id, getHeaders, router]);
@@ -53,6 +63,7 @@ export default function EditCataloguePage() {
           coverImage: form.coverImage,
           pdfUrl: form.pdfUrl,
           order: form.order,
+          subcategoryId: form.subcategoryId || undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -89,6 +100,30 @@ export default function EditCataloguePage() {
                 {error}
               </div>
             )}
+            <div>
+              <label htmlFor="subcategoryId" className="block text-sm font-medium text-foreground">
+                Subcategory
+              </label>
+              <select
+                id="subcategoryId"
+                value={form.subcategoryId ?? ""}
+                onChange={(e) => setForm((f) => f && { ...f, subcategoryId: e.target.value || undefined })}
+                className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+              >
+                <option value="">— Unassigned —</option>
+                {categories.map((cat) => (
+                  <optgroup key={cat.id} label={cat.name}>
+                    {subcategories
+                      .filter((s) => s.categoryId === cat.id)
+                      .map((sub) => (
+                        <option key={sub.id} value={sub.id}>
+                          {sub.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-foreground">
                 Title *

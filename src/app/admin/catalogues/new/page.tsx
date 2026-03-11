@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
@@ -16,7 +16,20 @@ export default function NewCataloguePage() {
     description: "",
     coverImage: "",
     pdfUrl: "",
+    subcategoryId: "",
   });
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [subcategories, setSubcategories] = useState<{ id: string; name: string; categoryId: string }[]>([]);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch("/api/admin/categories", { headers: getHeaders() })
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setCategories);
+    fetch("/api/admin/subcategories", { headers: getHeaders() })
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setSubcategories);
+  }, [token, getHeaders]);
 
   if (!token) {
     router.replace("/admin");
@@ -31,7 +44,7 @@ export default function NewCataloguePage() {
       const res = await fetch("/api/admin/catalogues", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getHeaders() },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, subcategoryId: form.subcategoryId || undefined }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -67,6 +80,30 @@ export default function NewCataloguePage() {
                 {error}
               </div>
             )}
+            <div>
+              <label htmlFor="subcategoryId" className="block text-sm font-medium text-foreground">
+                Subcategory
+              </label>
+              <select
+                id="subcategoryId"
+                value={form.subcategoryId}
+                onChange={(e) => setForm((f) => ({ ...f, subcategoryId: e.target.value }))}
+                className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+              >
+                <option value="">— Unassigned —</option>
+                {categories.map((cat) => (
+                  <optgroup key={cat.id} label={cat.name}>
+                    {subcategories
+                      .filter((s) => s.categoryId === cat.id)
+                      .map((sub) => (
+                        <option key={sub.id} value={sub.id}>
+                          {sub.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-foreground">
                 Title *

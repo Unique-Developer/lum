@@ -26,10 +26,8 @@ function getEffectivePdfUrl(pdfUrl: string): string {
     try {
       const u = new URL(pdfUrl);
       const host = u.hostname.toLowerCase();
-
       const isR2 = host.endsWith(".r2.dev") || host.includes("r2.dev");
       const isB2 = host.includes("backblazeb2.com");
-
       const pathParts = u.pathname.split("/").filter(Boolean);
       const key =
         pathParts.length >= 1
@@ -108,10 +106,12 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
     async (pageNum: number, isCurrentPage: boolean) => {
       if (loadedPagesRef.current.has(pageNum)) return;
       if (isCurrentPage) setLoadingPage(pageNum);
-      const dataUrl = await loadPage(pageNum);
-      if (dataUrl) {
+      const objectUrl = await loadPage(pageNum);
+      if (objectUrl) {
         loadedPagesRef.current.add(pageNum);
-        setPageCache((prev) => ({ ...prev, [pageNum]: dataUrl }));
+        setPageCache((prev) => ({ ...prev, [pageNum]: objectUrl }));
+      } else if (isCurrentPage) {
+        setError("Catalogue PDF not available.");
       }
       if (isCurrentPage) setLoadingPage(null);
     },
@@ -166,16 +166,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   };
 
   const currentImage = pageCache[currentPage];
-  const isLoading = !docReady && !error;
   const isPageLoading = loadingPage !== null && !currentImage;
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-2 border-primary-main border-t-transparent" />
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto w-full max-w-4xl px-0 sm:px-2">
