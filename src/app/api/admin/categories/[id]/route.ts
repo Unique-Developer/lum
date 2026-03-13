@@ -39,6 +39,7 @@ export async function PUT(
       ...current,
       name,
       slug: slug || current.slug,
+      image: body.image !== undefined ? (body.image ? String(body.image).trim() : undefined) : current.image,
       order: body.order !== undefined ? Number(body.order) : current.order,
     };
     categories[idx] = updated;

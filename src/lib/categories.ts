@@ -4,6 +4,7 @@ export type Category = {
   id: string;
   name: string;
   slug: string;
+  image?: string;
   order: number;
 };
 

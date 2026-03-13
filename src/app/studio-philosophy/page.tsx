@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 export const metadata = {
   title: "Studio | Lumin Art",
   description:
-    "Our approach to luxury lighting: architectural rigour, material honesty, and light as a medium for experience. Consult → Design → Execute — our process from vision to reality.",
+    "Our approach to design-driven lighting: architectural rigour, material honesty, and light as a medium for experience. Consult → Design → Execute — our process from vision to reality.",
 };
 
 const tenets = [

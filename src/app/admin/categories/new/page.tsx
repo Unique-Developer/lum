@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { FileUpload } from "@/components/admin/FileUpload";
 
 export default function NewCategoryPage() {
   const { token, getHeaders } = useAdminAuth();
@@ -11,6 +12,7 @@ export default function NewCategoryPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [name, setName] = useState("");
+  const [image, setImage] = useState("");
 
   if (!token) {
     router.replace("/admin");
@@ -25,7 +27,7 @@ export default function NewCategoryPage() {
       const res = await fetch("/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getHeaders() },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, image }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -71,6 +73,44 @@ export default function NewCategoryPage() {
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
                 placeholder="e.g. Architectural Lighting"
               />
+            </div>
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium text-foreground">
+                Category image
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">
+                Optional. Shown on the public catalogue category cards.
+              </p>
+              <div className="mt-2 flex items-center gap-3">
+                <div className="h-16 w-16 overflow-hidden rounded-lg border border-foreground/10 bg-foreground/5">
+                  {image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={image} alt={name || "Category"} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs text-foreground/40">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex gap-2">
+                    <input
+                      id="image"
+                      placeholder="https://... or upload"
+                      value={image}
+                      onChange={(e) => setImage(e.target.value)}
+                      className="flex-1 rounded-lg border border-foreground/20 bg-background px-3 py-2 text-sm text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                    />
+                    <FileUpload
+                      accept="image"
+                      prefix="categories"
+                      onUpload={(url) => setImage(url)}
+                      getHeaders={getHeaders}
+                      buttonLabel="Upload"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="flex gap-4">
               <button

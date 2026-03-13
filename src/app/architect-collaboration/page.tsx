@@ -5,7 +5,7 @@ import { CollaborationForm } from "@/components/architect/CollaborationForm";
 export const metadata = {
   title: "Architects & Designers — Collaborate | Lumin Art",
   description:
-    "Partner with Lumin Art for luxury lighting solutions. Architects and designers — let's collaborate on your next project.",
+    "Partner with Lumin Art for architectural lighting solutions. Architects and designers — let's collaborate on your next project.",
 };
 
 export default function ArchitectCollaborationPage() {

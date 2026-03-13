@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 export const metadata = {
   title: "Contact | Lumin Art",
   description:
-    "Get in touch with Lumin Art for luxury lighting solutions, consultations, and project inquiries.",
+    "Get in touch with Lumin Art for professional lighting solutions, consultations, and project inquiries.",
 };
 
 export default function ContactPage() {

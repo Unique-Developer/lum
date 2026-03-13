@@ -22,31 +22,31 @@ const orgJsonLd = getOrganizationJsonLd();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Lumin Art | Luxury Lighting Studio",
+    default: "Lumin Art | Professional Lighting Solutions",
     template: "%s | Lumin Art",
   },
   description:
-    "Light is not a product. It is an experience. Lumin Art – Luxury Lighting Studio. A Light House Creation.",
+    "Light is not a product. It is an experience. Lumin Art – Professional Lighting Solutions. A Light House Creation.",
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: "Lumin Art",
-    title: "Lumin Art | Luxury Lighting Studio",
-    description: "Light is not a product. It is an experience. Lumin Art – Luxury Lighting Studio. A Light House Creation.",
+    title: "Lumin Art | Professional Lighting Solutions",
+    description: "Light is not a product. It is an experience. Lumin Art – Professional Lighting Solutions. A Light House Creation.",
     url: siteUrl,
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Lumin Art – Luxury Lighting Studio",
+        alt: "Lumin Art – Professional Lighting Solutions",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lumin Art | Luxury Lighting Studio",
-    description: "Light is not a product. It is an experience. Lumin Art – Luxury Lighting Studio. A Light House Creation.",
+    title: "Lumin Art | Professional Lighting Solutions",
+    description: "Light is not a product. It is an experience. Lumin Art – Professional Lighting Solutions. A Light House Creation.",
   },
   alternates: {
     canonical: siteUrl,

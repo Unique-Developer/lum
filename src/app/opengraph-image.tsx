@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Lumin Art – Luxury Lighting Studio";
+export const alt = "Lumin Art – Professional Lighting Solutions";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -54,7 +54,7 @@ export default function Image() {
               color: "rgba(255,255,255,0.85)",
             }}
           >
-            Luxury Lighting Studio
+            Professional Lighting Solutions
           </p>
           <p
             style={{

@@ -26,7 +26,7 @@ export function HeroSection() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 0.8 }}
         >
-          Lumin Art — Luxury Lighting Studio
+          Lumin Art — Architectural & Decorative Lighting
         </motion.p>
       </div>
 

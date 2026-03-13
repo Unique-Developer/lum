@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 export const metadata = {
   title: "Catalogue | Lumin Art",
   description:
-    "Browse our luxury lighting catalogues. Architectural, technical, and decorative solutions.",
+    "Browse our architectural lighting catalogues. Professional, technical, and decorative solutions.",
 };
 
 export const dynamic = "force-dynamic";
@@ -36,10 +36,21 @@ export default async function CataloguePage() {
                 href={`/catalogue/${cat.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] transition-all duration-300 hover:border-primary-200 hover:shadow-xl"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-                  <span className="text-6xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
-                    {cat.name.charAt(0)}
-                  </span>
+                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
+                  {cat.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <span className="text-6xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
+                        {cat.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="p-4 sm:p-6">
                   <h2 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary-main sm:text-xl">

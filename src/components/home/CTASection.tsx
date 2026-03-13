@@ -24,7 +24,7 @@ export function CTASection() {
             <span className="text-primary-main">Let&apos;s Collaborate</span>
           </h2>
           <p className="mb-12 text-lg text-foreground/70 md:text-xl">
-            Bring your vision to light. Connect with our premium consultation
+            Bring your vision to light. Connect with our project consultation
             team.
           </p>
 

@@ -8,7 +8,7 @@ const projects = [
   {
     id: 1,
     title: "Residential Pavilion",
-    category: "Luxury Residential",
+    category: "Residential",
     description: "Integrated ambient and accent lighting for a private residential pavilion.",
   },
   {

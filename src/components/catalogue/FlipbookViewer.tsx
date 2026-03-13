@@ -79,7 +79,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   const [loadingPage, setLoadingPage] = useState<number | null>(1);
   const pdfDocRef = useRef<import("pdfjs-dist").PDFDocumentProxy | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
-  const touchStartX = useRef<number>(0);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const loadPage = useCallback(
     async (pageNum: number): Promise<string | null> => {
@@ -155,14 +155,30 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+    if (!e.touches[0]) return;
+    touchStart.current = {
+      x: e.touches[0].clientX,
+      y: e.touches[0].clientY,
+    };
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!e.changedTouches[0]) return;
-    const deltaX = touchStartX.current - e.changedTouches[0].clientX;
-    if (deltaX > SWIPE_THRESHOLD_PX) goNext();
-    else if (deltaX < -SWIPE_THRESHOLD_PX) goPrev();
+    if (!touchStart.current || !e.changedTouches[0]) return;
+    const start = touchStart.current;
+    const endTouch = e.changedTouches[0];
+    const deltaX = start.x - endTouch.clientX;
+    const deltaY = start.y - endTouch.clientY;
+
+    // Only treat as a swipe if the gesture is mostly horizontal
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      return;
+    }
+
+    if (deltaX > 0) {
+      goNext();
+    } else {
+      goPrev();
+    }
   };
 
   const currentImage = pageCache[currentPage];
@@ -171,13 +187,11 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   return (
     <div className="mx-auto w-full max-w-4xl px-0 sm:px-2">
       <div
-        className="relative flex min-h-[260px] touch-pan-y w-full max-w-full cursor-grab active:cursor-grabbing items-center justify-center overflow-hidden rounded-xl bg-foreground/5 overscroll-contain"
+        className="relative flex min-h-[260px] w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-foreground/5"
         style={{
           aspectRatio: "3/4",
           maxHeight: "min(76vh, calc(100svh - 220px))",
         }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
       >
         <AnimatePresence mode="wait">
           {error ? (
@@ -207,7 +221,9 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
-              className="flex h-full min-h-0 w-full items-center justify-center p-4 sm:p-6 md:p-8"
+              className="flex h-full min-h-0 w-full items-center justify-center p-4 sm:p-6 md:p-8 cursor-grab active:cursor-grabbing"
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
             >
               {currentImage ? (
                 // eslint-disable-next-line @next/next/no-img-element -- data URL from PDF.js canvas

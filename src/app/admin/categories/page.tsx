@@ -9,6 +9,7 @@ type Category = {
   id: string;
   name: string;
   slug: string;
+  image?: string;
   order: number;
 };
 
@@ -94,11 +95,23 @@ export default function AdminCategoriesPage() {
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.02] p-6"
+                className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.02] p-4 sm:p-6 gap-4"
               >
-                <div>
-                  <h2 className="font-semibold text-foreground">{cat.name}</h2>
-                  <p className="mt-1 text-xs text-foreground/50">Slug: {cat.slug}</p>
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 overflow-hidden rounded-lg border border-foreground/10 bg-foreground/5 flex-shrink-0">
+                    {cat.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={cat.image} alt={cat.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-xs text-foreground/40">
+                        No image
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="font-semibold text-foreground">{cat.name}</h2>
+                    <p className="mt-1 text-xs text-foreground/50">Slug: {cat.slug}</p>
+                  </div>
                 </div>
                 <div className="flex gap-3">
                   <Link

@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name } = body;
+    const { name, image } = body;
     if (!name || typeof name !== "string") {
       return NextResponse.json({ error: "Name required" }, { status: 400 });
     }
@@ -43,6 +43,7 @@ export async function POST(req: Request) {
       id: finalId,
       name: String(name).trim(),
       slug: finalId,
+      image: image ? String(image).trim() : undefined,
       order: maxOrder + 1,
     };
 

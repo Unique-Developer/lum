@@ -107,7 +107,7 @@ export function Preloader() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              Luxury Lighting Studio
+              Architectural & Decorative Lighting
             </motion.p>
           </motion.div>
         </motion.div>

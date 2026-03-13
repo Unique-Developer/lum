@@ -16,7 +16,7 @@ const PILLARS = [
     description: "Bespoke fixtures tailored to your vision.",
   },
   {
-    title: "Premium Consultation",
+    title: "Project Consultation",
     description: "Expert guidance from concept to installation.",
   },
 ];
@@ -42,7 +42,7 @@ export function WhatIsLuminArtSection() {
             </span>
           </h2>
           <p className="text-primary-main text-xl font-medium md:text-2xl">
-            Luxury Lighting Experience Studio
+            Design-Driven Lighting Studio
           </p>
         </motion.div>
 

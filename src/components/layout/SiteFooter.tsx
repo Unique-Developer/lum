@@ -18,7 +18,7 @@ const otherLinks = [
 export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden border-t border-foreground/10 bg-gradient-to-b from-foreground/[0.02] to-primary-50/30">
-      {/* Subtle ambient glow — references light/luxury theme */}
+      {/* Subtle ambient glow — references light theme */}
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
         aria-hidden
@@ -34,7 +34,7 @@ export function SiteFooter() {
           <div className="space-y-4">
             <Logo href="/" height={40} width={130} />
             <p className="max-w-xs text-sm leading-relaxed text-foreground/60">
-              Light is not a product. It is an experience. Luxury lighting studio — A Light House Creation.
+              Light is not a product. It is an experience. Professional lighting solutions — A Light House Creation.
             </p>
             <div className="h-px w-12 bg-primary-main/30" aria-hidden />
           </div>

@@ -10,24 +10,25 @@ const MILESTONES = [
     text: "Light House began its journey 23 years ago.",
   },
   {
-    year: "2008",
+    year: "2010",
     title: "Economy Leader",
     text: "Became a leader in economy range lighting solutions.",
   },
   {
     year: "2015",
+    title: "Service Excellence",
+    text: "Expanded after-sales service and support network.",
+    
+  },
+  {
+    year: "2020",
     title: "Trusted Partner",
     text: "Trusted by architects, electricians, and builders nationwide.",
   },
   {
-    year: "2020",
-    title: "Service Excellence",
-    text: "Expanded after-sales service and support network.",
-  },
-  {
-    year: "2024",
+    year: "2025",
     title: "Lumin Art",
-    text: "Launching the luxury lighting studio experience.",
+    text: "Launching professional lighting solutions and bespoke design.",
   },
 ];
 

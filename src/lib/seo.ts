@@ -28,11 +28,11 @@ export function getOrganizationJsonLd() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Lumin Art",
-    alternateName: "Lumin Art Luxury Lighting Studio",
+    alternateName: "Lumin Art Professional Lighting Solutions",
     url,
     logo: absoluteUrl("/opengraph-image"),
     description:
-      "Luxury Lighting Studio. Light is not a product. It is an experience. A Light House Creation.",
+      "Professional lighting solutions. Light is not a product. It is an experience. A Light House Creation.",
     foundingDate: "2001",
     sameAs: [],
   };

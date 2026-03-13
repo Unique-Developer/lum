@@ -3,12 +3,14 @@
     "id": "architectural-lighting",
     "name": "Architectural Lighting",
     "slug": "architectural-lighting",
+    "image": "/images/categories/architectural-lighting.jpg",
     "order": 0
   },
   {
     "id": "decorative-lighting",
     "name": "Decorative Lighting",
     "slug": "decorative-lighting",
+    "image": "/images/categories/decorative-lighting.jpg",
     "order": 1
   }
 ]
