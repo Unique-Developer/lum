@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { AdminShell } from "@/components/admin/AdminShell";
 import { FileUpload } from "@/components/admin/FileUpload";
 
 export default function NewCategoryPage() {
@@ -13,6 +14,8 @@ export default function NewCategoryPage() {
   const [error, setError] = useState("");
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
+  const [description, setDescription] = useState("");
+  const [includes, setIncludes] = useState("");
 
   if (!token) {
     router.replace("/admin");
@@ -27,7 +30,15 @@ export default function NewCategoryPage() {
       const res = await fetch("/api/admin/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getHeaders() },
-        body: JSON.stringify({ name, image }),
+        body: JSON.stringify({
+          name,
+          image,
+          description: description.trim() || undefined,
+          includes: includes
+            .split("\n")
+            .map((s) => s.trim())
+            .filter(Boolean),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -43,17 +54,8 @@ export default function NewCategoryPage() {
   }
 
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <Link href="/admin/categories" className="text-lg font-semibold tracking-tight text-primary-main">
-          ← Categories
-        </Link>
-      </header>
-
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-xl">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">New Category</h1>
-          <p className="mt-2 text-foreground/70">Add a top-level category (e.g. Architectural Lighting, Decorative Lighting).</p>
+    <AdminShell title="New Category" subtitle="Add a top-level category for the catalogue and Lighting Solutions page">
+      <div className="mx-auto max-w-xl">
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             {error && (
@@ -72,6 +74,34 @@ export default function NewCategoryPage() {
                 onChange={(e) => setName(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
                 placeholder="e.g. Architectural Lighting"
+              />
+            </div>
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-foreground">
+                Description (Lighting Solutions)
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">Optional. Shown on the Lighting Solutions page.</p>
+              <textarea
+                id="description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-2 w-full resize-none rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                placeholder="e.g. Lighting designed to complement architectural forms..."
+              />
+            </div>
+            <div>
+              <label htmlFor="includes" className="block text-sm font-medium text-foreground">
+                Includes (Lighting Solutions)
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">One per line. Optional.</p>
+              <textarea
+                id="includes"
+                rows={4}
+                value={includes}
+                onChange={(e) => setIncludes(e.target.value)}
+                className="mt-2 w-full resize-none rounded-lg border border-foreground/20 bg-background px-4 py-2 font-mono text-sm text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                placeholder={"Recessed lighting\nCove lighting\nWall washing"}
               />
             </div>
             <div>
@@ -128,8 +158,12 @@ export default function NewCategoryPage() {
               </Link>
             </div>
           </form>
+        <div className="mt-6">
+          <Link href="/admin/categories" className="text-sm text-primary-main hover:underline">
+            ← Back to Categories
+          </Link>
         </div>
-      </section>
-    </main>
+      </div>
+    </AdminShell>
   );
 }

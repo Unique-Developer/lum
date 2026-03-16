@@ -35,12 +35,25 @@ export async function PUT(
     const current = categories[idx];
     const name = body.name !== undefined ? String(body.name).trim() : current.name;
     const slug = body.slug !== undefined ? String(body.slug).trim().toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/^-|-$/g, "") : current.slug;
+    const description =
+      body.description !== undefined
+        ? (body.description ? String(body.description).trim() : undefined) || undefined
+        : current.description;
+    const includes =
+      body.includes !== undefined
+        ? Array.isArray(body.includes)
+          ? body.includes.filter((x: unknown): x is string => typeof x === "string")
+          : undefined
+        : current.includes;
+
     const updated: Category = {
       ...current,
       name,
       slug: slug || current.slug,
       image: body.image !== undefined ? (body.image ? String(body.image).trim() : undefined) : current.image,
       order: body.order !== undefined ? Number(body.order) : current.order,
+      description,
+      includes,
     };
     categories[idx] = updated;
     await writeCategories(categories);

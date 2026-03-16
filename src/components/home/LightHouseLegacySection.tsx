@@ -2,37 +2,9 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import type { HomepageContent } from "@/lib/homepage";
 
-const MILESTONES = [
-  {
-    year: "2001",
-    title: "Founded",
-    text: "Light House began its journey 23 years ago.",
-  },
-  {
-    year: "2010",
-    title: "Economy Leader",
-    text: "Became a leader in economy range lighting solutions.",
-  },
-  {
-    year: "2015",
-    title: "Service Excellence",
-    text: "Expanded after-sales service and support network.",
-    
-  },
-  {
-    year: "2020",
-    title: "Trusted Partner",
-    text: "Trusted by architects, electricians, and builders nationwide.",
-  },
-  {
-    year: "2025",
-    title: "Lumin Art",
-    text: "Launching professional lighting solutions and bespoke design.",
-  },
-];
-
-export function LightHouseLegacySection() {
+export function LightHouseLegacySection({ content }: { content: HomepageContent["lightHouseLegacy"] }) {
   const sectionRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -71,16 +43,19 @@ export function LightHouseLegacySection() {
           transition={{ duration: 0.8 }}
         >
           <h2 className="mb-12 text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Light House Legacy
+            {content.title}
           </h2>
           <p className="mb-16 text-lg text-foreground/80 md:text-xl">
-            23 years of illuminating spaces. Economy range lighting leader.
-            <br />
-            Trusted by architects, electricians, builders.
+            {content.subtitle.split("\n").map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < content.subtitle.split("\n").length - 1 && <br />}
+              </span>
+            ))}
           </p>
 
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-            {MILESTONES.map((m, i) => (
+            {content.milestones.map((m, i) => (
               <motion.div
                 key={m.year}
                 className="rounded-2xl border border-primary-main/20 bg-background/80 px-6 py-4 backdrop-blur-sm"

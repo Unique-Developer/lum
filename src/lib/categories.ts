@@ -6,6 +6,10 @@ export type Category = {
   slug: string;
   image?: string;
   order: number;
+  /** Used on Lighting Solutions page. Fallback to default if empty. */
+  description?: string;
+  /** Comma-separated or array. Shown as "Includes" list on Lighting Solutions. */
+  includes?: string[];
 };
 
 export type Subcategory = {

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { absoluteUrl } from "@/lib/seo";
 import { getCatalogues } from "@/lib/catalogue";
 import { getBlogPosts } from "@/lib/blog";
+import { getProjects } from "@/lib/projects";
 
 const STATIC_PAGES = [
   { path: "/", changeFrequency: "weekly" as const, priority: 1 },
@@ -23,7 +24,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: p.priority,
   }));
 
-  const [catalogues, posts] = await Promise.all([getCatalogues(), getBlogPosts()]);
+  const [catalogues, posts, projects] = await Promise.all([
+    getCatalogues(),
+    getBlogPosts(),
+    getProjects(),
+  ]);
 
   for (const cat of catalogues) {
     entries.push({
@@ -39,6 +44,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: absoluteUrl(`/posts/${post.slug}`),
       lastModified: new Date(post.publishedAt),
       changeFrequency: "yearly",
+      priority: 0.7,
+    });
+  }
+
+  for (const project of projects) {
+    entries.push({
+      url: absoluteUrl(`/projects/${project.slug}`),
+      lastModified: new Date(),
+      changeFrequency: "monthly",
       priority: 0.7,
     });
   }

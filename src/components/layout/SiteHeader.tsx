@@ -6,11 +6,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./Logo";
 
 const navLinks = [
-  { href: "/catalogue", label: "Catalogue" },
-  { href: "/posts", label: "Posts" },
-  { href: "/about", label: "About" },
+  { href: "/", label: "Home" },
   { href: "/studio-philosophy", label: "Studio" },
   { href: "/projects", label: "Projects" },
+  { href: "/lighting-solutions", label: "Lighting Solutions" },
+  { href: "/for-architects", label: "For Architects" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 

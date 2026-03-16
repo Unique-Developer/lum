@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 type UnusedFile = { key: string; size: number; lastModified?: string };
 
@@ -76,8 +76,6 @@ export default function AdminStoragePage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Delete failed");
       setSelected(new Set());
-      setAnalysis(null);
-      setLoading(true);
       const refresh = await fetch("/api/admin/storage/unused", { headers: getHeaders() });
       const updated = await refresh.json();
       setAnalysis(updated);
@@ -91,27 +89,12 @@ export default function AdminStoragePage() {
   if (!token) return null;
 
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <Link
-          href="/admin/dashboard"
-          className="text-lg font-semibold tracking-tight text-primary-main"
-        >
-          ← Dashboard
-        </Link>
-      </header>
-
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-4xl">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Storage cleanup
-          </h1>
-          <p className="mt-2 text-foreground/70">
-            Find and remove unused files (catalogue images, cover images, PDFs, post media) from
-            Backblaze B2 to free up space.
-          </p>
-
-          {error && (
+    <AdminShell
+      title="Storage"
+      subtitle="Find and remove unused files (catalogue images, PDFs, post media) to free up space."
+    >
+      <div className="mx-auto max-w-4xl">
+        {error && (
             <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
               {error}
             </div>
@@ -221,8 +204,7 @@ export default function AdminStoragePage() {
               )}
             </div>
           ) : null}
-        </div>
-      </section>
-    </main>
+      </div>
+    </AdminShell>
   );
 }

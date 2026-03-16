@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { AdminShell } from "@/components/admin/AdminShell";
 import { filterPostsBySearch, type BlogPost } from "@/lib/blog-types";
 
 export default function AdminBlogsPage() {
@@ -48,32 +49,17 @@ export default function AdminBlogsPage() {
   }
 
   if (!token) return null;
-  if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (loading)
+    return (
+      <AdminShell title="Posts">
+        <div className="flex h-48 items-center justify-center text-foreground/50">Loading…</div>
+      </AdminShell>
+    );
 
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/admin/dashboard" className="text-lg font-semibold tracking-tight text-primary-main">
-            ← Dashboard
-          </Link>
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              router.replace("/admin");
-            }}
-            className="text-sm text-foreground/70 hover:text-foreground"
-          >
-            Sign out
-          </button>
-        </div>
-      </header>
-
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-6xl">
+    <AdminShell title="Posts" subtitle="Create and manage blog posts and articles">
+      <div className="mx-auto max-w-4xl">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Posts</h1>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <input
                 type="search"
@@ -155,7 +141,6 @@ export default function AdminBlogsPage() {
             </div>
           ) : null}
         </div>
-      </section>
-    </main>
+    </AdminShell>
   );
 }

@@ -1,27 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { HomepageContent } from "@/lib/homepage";
 
-const PILLARS = [
-  {
-    title: "Architectural Lighting",
-    description: "Designed for spaces that demand precision and atmosphere.",
-  },
-  {
-    title: "Technical Lighting",
-    description: "Engineered solutions for performance and longevity.",
-  },
-  {
-    title: "Customized Fancy Lights",
-    description: "Bespoke fixtures tailored to your vision.",
-  },
-  {
-    title: "Project Consultation",
-    description: "Expert guidance from concept to installation.",
-  },
-];
-
-export function WhatIsLuminArtSection() {
+export function WhatIsLuminArtSection({ content }: { content: HomepageContent["whatIsLuminArt"] }) {
   return (
     <section className="relative min-h-screen overflow-hidden bg-background py-24 md:py-32">
       {/* Subtle gradient background (replaces 3D canvas to avoid React/Three.js conflict) */}
@@ -38,17 +20,17 @@ export function WhatIsLuminArtSection() {
         >
           <h2 className="mb-4 text-4xl font-semibold tracking-tight text-foreground md:text-6xl lg:text-7xl">
             <span className="bg-gradient-to-b from-foreground to-foreground/80 bg-clip-text text-transparent">
-              Lumin Art
+              {content.brandName}
             </span>
           </h2>
           <p className="text-primary-main text-xl font-medium md:text-2xl">
-            Design-Driven Lighting Studio
+            {content.tagline}
           </p>
         </motion.div>
 
         {/* Pillars grid */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {PILLARS.map((pillar, i) => (
+          {content.pillars.map((pillar, i) => (
             <motion.div
               key={pillar.title}
               className="group relative rounded-2xl border border-primary-main/15 bg-background/70 p-6 backdrop-blur-sm transition-colors hover:border-primary-main/30 hover:bg-background/90"

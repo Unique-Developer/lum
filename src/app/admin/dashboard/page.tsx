@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
-import { Logo } from "@/components/layout/Logo";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export default function AdminDashboardPage() {
-  const { token, email, logout } = useAdminAuth();
+  const { token } = useAdminAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -18,94 +18,73 @@ export default function AdminDashboardPage() {
 
   if (!token) return null;
 
-  return (
-    <main className="min-h-screen">
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Logo href="/admin/dashboard" height={32} width={100} />
-            <span className="text-sm text-foreground/60">Admin</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-foreground/60">{email}</span>
-            <button
-              type="button"
-              onClick={() => {
-                logout();
-                router.replace("/admin");
-              }}
-              className="text-sm text-foreground/70 hover:text-foreground"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+  const cards = [
+    {
+      href: "/admin/homepage",
+      title: "Homepage",
+      desc: "Edit hero image, visual proof images, legacy milestones, dual brand links, pillars, and CTA.",
+    },
+    {
+      href: "/admin/projects",
+      title: "Projects",
+      desc: "Manage showcase projects. Add, edit, and remove project listings with title, category, overview, concept, and fixtures.",
+    },
+    {
+      href: "/admin/categories",
+      title: "Categories",
+      desc: "Manage categories and subcategories. Edit name, image, description, and includes for the Lighting Solutions page.",
+    },
+    {
+      href: "/admin/subcategories",
+      title: "Subcategories",
+      desc: "Manage subcategories under each category for catalogue organisation.",
+    },
+    {
+      href: "/admin/catalogues",
+      title: "Catalogues",
+      desc: "Upload, edit, remove, and reorder PDF catalogues.",
+    },
+    {
+      href: "/admin/blogs",
+      title: "Posts",
+      desc: "Create, edit, and remove blog posts and articles.",
+    },
+    {
+      href: "/admin/lighting-solutions",
+      title: "Lighting Solutions Page",
+      desc: "Edit page title, subtitle, Custom Studio section text, and collaboration process.",
+    },
+    {
+      href: "/admin/storage",
+      title: "Storage",
+      desc: "Find and remove unused catalogue images, PDFs, and post media.",
+    },
+  ];
 
-      <section className="px-6 py-16 md:py-24">
-        <div className="mx-auto max-w-2xl">
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Dashboard</h1>
-          <p className="mt-2 text-foreground/70">Manage catalogues and posts.</p>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  return (
+    <AdminShell title="Dashboard" subtitle="Manage your site content">
+      <div className="mx-auto max-w-4xl">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {cards.map((c) => (
             <Link
-              href="/admin/categories"
-              className="block rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 transition-all hover:border-primary-200 hover:shadow-lg"
+              key={c.href}
+              href={c.href}
+              className="block rounded-xl border border-foreground/10 bg-foreground/[0.02] p-6 transition-all hover:border-primary-200 hover:shadow-md"
             >
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">Categories</h2>
-              <p className="mt-2 text-sm text-foreground/70">
-                Manage categories and subcategories (Architectural, Decorative, etc.).
-              </p>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">{c.title}</h2>
+              <p className="mt-2 text-sm text-foreground/70">{c.desc}</p>
               <span className="mt-4 inline-flex text-sm font-medium text-primary-main">
-                Manage categories →
+                Open →
               </span>
             </Link>
-            <Link
-              href="/admin/catalogues"
-              className="block rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 transition-all hover:border-primary-200 hover:shadow-lg"
-            >
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">Catalogues</h2>
-              <p className="mt-2 text-sm text-foreground/70">
-                Upload, edit, remove, and reorder catalogues.
-              </p>
-              <span className="mt-4 inline-flex text-sm font-medium text-primary-main">
-                Manage catalogues →
-              </span>
-            </Link>
-            <Link
-              href="/admin/blogs"
-              className="block rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 transition-all hover:border-primary-200 hover:shadow-lg"
-            >
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">Posts</h2>
-              <p className="mt-2 text-sm text-foreground/70">
-                Create, edit, and remove posts — articles, updates, and more.
-              </p>
-              <span className="mt-4 inline-flex text-sm font-medium text-primary-main">
-                Manage posts →
-              </span>
-            </Link>
-            <Link
-              href="/admin/storage"
-              className="block rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-8 transition-all hover:border-primary-200 hover:shadow-lg"
-            >
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">Storage</h2>
-              <p className="mt-2 text-sm text-foreground/70">
-                Find and remove unused catalogue images, PDFs, and post media to free up space.
-              </p>
-              <span className="mt-4 inline-flex text-sm font-medium text-primary-main">
-                Manage storage →
-              </span>
-            </Link>
-          </div>
-          <div className="mt-12">
-            <Link
-              href="/"
-              className="text-sm text-foreground/60 hover:text-foreground"
-            >
-              ← Back to site
-            </Link>
-          </div>
+          ))}
         </div>
-      </section>
-    </main>
+        <div className="mt-10">
+          <Link href="/" target="_blank" rel="noopener noreferrer" className="text-sm text-foreground/60 hover:text-foreground">
+            View public site →
+          </Link>
+        </div>
+      </div>
+    </AdminShell>
   );
 }

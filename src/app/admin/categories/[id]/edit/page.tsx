@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { AdminShell } from "@/components/admin/AdminShell";
 import { FileUpload } from "@/components/admin/FileUpload";
 
 type Category = {
@@ -12,6 +13,8 @@ type Category = {
   slug: string;
   image?: string;
   order: number;
+  description?: string;
+  includes?: string[];
 };
 
 export default function EditCategoryPage() {
@@ -45,7 +48,14 @@ export default function EditCategoryPage() {
       const res = await fetch(`/api/admin/categories/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", ...getHeaders() },
-        body: JSON.stringify({ name: form.name, slug: form.slug, image: form.image, order: form.order }),
+        body: JSON.stringify({
+        name: form.name,
+        slug: form.slug,
+        image: form.image,
+        order: form.order,
+        description: form.description,
+        includes: form.includes,
+      }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -61,21 +71,17 @@ export default function EditCategoryPage() {
   }
 
   if (!token) return null;
-  if (fetching || !form) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (fetching || !form)
+    return (
+      <AdminShell title="Edit Category">
+        <div className="flex h-48 items-center justify-center text-foreground/50">Loading…</div>
+      </AdminShell>
+    );
 
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <Link href="/admin/categories" className="text-lg font-semibold tracking-tight text-primary-main">
-          ← Categories
-        </Link>
-      </header>
-
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-xl">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Edit Category</h1>
-
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+    <AdminShell title="Edit Category" subtitle={form.name}>
+      <div className="mx-auto max-w-xl">
+        <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-800">
                 {error}
@@ -102,6 +108,50 @@ export default function EditCategoryPage() {
                 value={form.slug}
                 onChange={(e) => setForm((f) => f && { ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-") })}
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+              />
+            </div>
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-foreground">
+                Description (Lighting Solutions page)
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">
+                Optional. Shown on the Lighting Solutions page for this category.
+              </p>
+              <textarea
+                id="description"
+                rows={3}
+                value={form.description ?? ""}
+                onChange={(e) => setForm((f) => f && { ...f, description: e.target.value || undefined })}
+                className="mt-2 w-full resize-none rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                placeholder="e.g. Lighting designed to complement architectural forms..."
+              />
+            </div>
+            <div>
+              <label htmlFor="includes" className="block text-sm font-medium text-foreground">
+                Includes (Lighting Solutions page)
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">
+                One item per line. Shown as bullet list on Lighting Solutions.
+              </p>
+              <textarea
+                id="includes"
+                rows={4}
+                value={(form.includes ?? []).join("\n")}
+                onChange={(e) =>
+                  setForm((f) =>
+                    f
+                      ? {
+                          ...f,
+                          includes: e.target.value
+                            .split("\n")
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                        }
+                      : f
+                  )
+                }
+                className="mt-2 w-full resize-none rounded-lg border border-foreground/20 bg-background px-4 py-2 font-mono text-sm text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                placeholder="Recessed lighting\nCove lighting\nWall washing"
               />
             </div>
             <div>
@@ -158,8 +208,12 @@ export default function EditCategoryPage() {
               </Link>
             </div>
           </form>
+          <div className="mt-6">
+            <Link href="/admin/categories" className="text-sm text-primary-main hover:underline">
+              ← Back to Categories
+            </Link>
+          </div>
         </div>
-      </section>
-    </main>
+    </AdminShell>
   );
 }

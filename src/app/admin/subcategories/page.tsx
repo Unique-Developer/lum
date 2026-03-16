@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 type Subcategory = {
   id: string;
@@ -66,32 +67,17 @@ export default function AdminSubcategoriesPage() {
   const getCategoryName = (categoryId: string) => categories.find((c) => c.id === categoryId)?.name ?? categoryId;
 
   if (!token) return null;
-  if (loading) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (loading)
+    return (
+      <AdminShell title="Subcategories">
+        <div className="flex h-48 items-center justify-center text-foreground/50">Loading…</div>
+      </AdminShell>
+    );
 
   return (
-    <main className="min-h-screen">
-      <header className="border-b border-foreground/10 px-6 py-4">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/admin/dashboard" className="text-lg font-semibold tracking-tight text-primary-main">
-            ← Dashboard
-          </Link>
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              router.replace("/admin");
-            }}
-            className="text-sm text-foreground/70 hover:text-foreground"
-          >
-            Sign out
-          </button>
-        </div>
-      </header>
-
-      <section className="px-6 py-12">
-        <div className="mx-auto max-w-6xl">
+    <AdminShell title="Subcategories" subtitle="Manage subcategories under each catalogue category">
+      <div className="mx-auto max-w-4xl">
           <div className="mb-8 flex items-center justify-between">
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Subcategories</h1>
             <div className="flex gap-3">
               {filterCategoryId && (
                 <Link
@@ -177,7 +163,6 @@ export default function AdminSubcategoriesPage() {
             </div>
           )}
         </div>
-      </section>
-    </main>
+    </AdminShell>
   );
 }

@@ -1,17 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { HomepageContent } from "@/lib/homepage";
 
-const LIGHT_HOUSE_URL = "https://lighthouse.example.com"; // Placeholder - update with real URL
-const FANCY_LIGHT_URL = "https://fancylight.example.com"; // Placeholder - update with real URL
-
-export function DualBrandSection() {
+export function DualBrandSection({ content }: { content: HomepageContent["dualBrand"] }) {
   return (
     <section className="relative min-h-screen overflow-hidden bg-background">
       <div className="flex h-screen flex-col md:flex-row">
-        {/* Light House - Economy Range (Left) */}
+        {/* Light House studio family (Left) */}
         <motion.a
-          href={LIGHT_HOUSE_URL}
+          href={content.lightHouse.url}
           target="_blank"
           rel="noopener noreferrer"
           className="group relative flex flex-1 items-center justify-center overflow-hidden border-r border-foreground/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-main"
@@ -28,23 +26,23 @@ export function DualBrandSection() {
               className="text-primary-main text-3xl font-semibold tracking-tight md:text-5xl"
               whileHover={{ scale: 1.05 }}
             >
-              Light House
+              {content.lightHouse.name}
             </motion.h2>
             <p className="mt-4 text-foreground/70 md:text-xl">
-              Economy Range Lighting
+              {content.lightHouse.tagline}
             </p>
             <motion.span
               className="mt-6 inline-block text-sm uppercase tracking-widest text-primary-main opacity-70"
               whileHover={{ opacity: 1 }}
             >
-              Enter Portal →
+              {content.lightHouse.cta} →
             </motion.span>
           </div>
         </motion.a>
 
         {/* Online Fancy Light Store (Right) */}
         <motion.a
-          href={FANCY_LIGHT_URL}
+          href={content.fancyLight.url}
           target="_blank"
           rel="noopener noreferrer"
           className="group relative flex flex-1 items-center justify-center overflow-hidden transition-colors focus:outline-none focus:ring-2 focus:ring-primary-main"
@@ -61,16 +59,16 @@ export function DualBrandSection() {
               className="text-primary-main text-3xl font-semibold tracking-tight md:text-5xl"
               whileHover={{ scale: 1.05 }}
             >
-              Fancy Light Store
+              {content.fancyLight.name}
             </motion.h2>
             <p className="mt-4 text-foreground/70 md:text-xl">
-              Online E‑Commerce
+              {content.fancyLight.tagline}
             </p>
             <motion.span
               className="mt-6 inline-block text-sm uppercase tracking-widest text-primary-main opacity-70"
               whileHover={{ opacity: 1 }}
             >
-              Enter Portal →
+              {content.fancyLight.cta} →
             </motion.span>
           </div>
         </motion.a>

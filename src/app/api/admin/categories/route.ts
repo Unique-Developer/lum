@@ -24,7 +24,13 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name, image } = body;
+    let { name, image, description, includes } = body;
+    if (typeof includes === "string") {
+      includes = includes
+        .split("\n")
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+    }
     if (!name || typeof name !== "string") {
       return NextResponse.json({ error: "Name required" }, { status: 400 });
     }
@@ -45,6 +51,8 @@ export async function POST(req: Request) {
       slug: finalId,
       image: image ? String(image).trim() : undefined,
       order: maxOrder + 1,
+      description: description ? String(description).trim() || undefined : undefined,
+      includes: Array.isArray(includes) ? includes.filter((x): x is string => typeof x === "string") : undefined,
     };
 
     categories.push(newCategory);

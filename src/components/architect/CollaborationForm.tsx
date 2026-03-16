@@ -23,6 +23,9 @@ export function CollaborationForm() {
     email: "",
     phone: "",
     projectType: "",
+    location: "",
+    projectSize: "",
+    budgetRange: "",
     message: "",
   });
 
@@ -41,7 +44,17 @@ export function CollaborationForm() {
 
     if (res.ok && data.ok) {
       setStatus("success");
-      setForm({ name: "", firmName: "", email: "", phone: "", projectType: "", message: "" });
+      setForm({
+        name: "",
+        firmName: "",
+        email: "",
+        phone: "",
+        projectType: "",
+        location: "",
+        projectSize: "",
+        budgetRange: "",
+        message: "",
+      });
     } else {
       setStatus("error");
       setErrors(Array.isArray(data.errors) ? data.errors : ["Something went wrong."]);
@@ -165,24 +178,71 @@ export function CollaborationForm() {
               </div>
             </div>
 
-            <div>
-              <label htmlFor="projectType" className="mb-1.5 block text-sm font-medium text-foreground">
-                Project Type
-              </label>
-              <select
-                id="projectType"
-                required
-                value={form.projectType}
-                onChange={handleChange("projectType")}
-                className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
-              >
-                <option value="">Select project type</option>
-                {PROJECT_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <label htmlFor="projectType" className="mb-1.5 block text-sm font-medium text-foreground">
+                  Project Type
+                </label>
+                <select
+                  id="projectType"
+                  required
+                  value={form.projectType}
+                  onChange={handleChange("projectType")}
+                  className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                >
+                  <option value="">Select project type</option>
+                  {PROJECT_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="location" className="mb-1.5 block text-sm font-medium text-foreground">
+                  Location
+                </label>
+                <input
+                  id="location"
+                  type="text"
+                  required
+                  value={form.location}
+                  onChange={handleChange("location")}
+                  className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/50 focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                  placeholder="City, state"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <label htmlFor="projectSize" className="mb-1.5 block text-sm font-medium text-foreground">
+                  Project Size
+                </label>
+                <input
+                  id="projectSize"
+                  type="text"
+                  required
+                  value={form.projectSize}
+                  onChange={handleChange("projectSize")}
+                  className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/50 focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                  placeholder="Approximate area or number of spaces"
+                />
+              </div>
+              <div>
+                <label htmlFor="budgetRange" className="mb-1.5 block text-sm font-medium text-foreground">
+                  Budget Range
+                </label>
+                <input
+                  id="budgetRange"
+                  type="text"
+                  required
+                  value={form.budgetRange}
+                  onChange={handleChange("budgetRange")}
+                  className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/50 focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                  placeholder="Planned lighting budget"
+                />
+              </div>
             </div>
 
             <div>

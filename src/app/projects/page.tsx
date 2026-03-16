@@ -1,47 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { motion } from "framer-motion";
 
-const projects = [
-  {
-    id: 1,
-    title: "Residential Pavilion",
-    category: "Residential",
-    description: "Integrated ambient and accent lighting for a private residential pavilion.",
-  },
-  {
-    id: 2,
-    title: "Commercial Lobby",
-    category: "Corporate",
-    description: "Architectural linear lighting and control system for a corporate lobby.",
-  },
-  {
-    id: 3,
-    title: "Restaurant Terrace",
-    category: "Hospitality",
-    description: "Outdoor dining illumination with adjustable mood and weather considerations.",
-  },
-  {
-    id: 4,
-    title: "Art Gallery",
-    category: "Cultural",
-    description: "Precision lighting for artwork display with minimal spill and glare.",
-  },
-  {
-    id: 5,
-    title: "Hotel Corridor",
-    category: "Hospitality",
-    description: "Linear and recessed solutions for corridors with smooth transitions.",
-  },
-  {
-    id: 6,
-    title: "Office Floor",
-    category: "Corporate",
-    description: "Human-centric lighting with circadian support for open-plan offices.",
-  },
-];
+type Project = {
+  slug: string;
+  title: string;
+  category: string;
+  description: string;
+};
 
 const container = {
   hidden: { opacity: 0 },
@@ -59,6 +29,16 @@ const item = {
 };
 
 export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((r) => (r.ok ? r.json() : []))
+      .then(setProjects)
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <main className="min-h-screen bg-background">
       <SiteHeader />
@@ -74,6 +54,11 @@ export default function ProjectsPage() {
             </p>
           </div>
 
+          {loading ? (
+            <div className="flex min-h-[200px] items-center justify-center text-foreground/50">
+              Loading…
+            </div>
+          ) : (
           <motion.div
             variants={container}
             initial="hidden"
@@ -82,29 +67,36 @@ export default function ProjectsPage() {
           >
             {projects.map((project) => (
               <motion.article
-                key={project.id}
+                key={project.slug}
                 variants={item}
                 className="group overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] transition-all duration-300 hover:border-primary-200 hover:shadow-xl"
               >
-                <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-50 to-primary-100">
-                  <div className="flex h-full items-center justify-center text-primary-main/40 text-8xl font-light transition-transform duration-500 group-hover:scale-110">
-                    {String.fromCharCode(64 + project.id)}
+                <Link href={`/projects/${project.slug}`} className="block h-full">
+                  <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-50 to-primary-100">
+                    <div className="flex h-full items-center justify-center text-primary-main/40 text-4xl font-medium tracking-tight transition-transform duration-500 group-hover:scale-110">
+                      {project.category}
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <span className="text-xs uppercase tracking-widest text-primary-main">
-                    {project.category}
-                  </span>
-                  <h2 className="mt-2 text-xl font-semibold tracking-tight text-foreground group-hover:text-primary-main transition-colors">
-                    {project.title}
-                  </h2>
-                  <p className="mt-2 text-sm text-foreground/70 leading-relaxed">
-                    {project.description}
-                  </p>
-                </div>
+                  <div className="p-6">
+                    <span className="text-xs uppercase tracking-widest text-primary-main">
+                      {project.category}
+                    </span>
+                    <h2 className="mt-2 text-xl font-semibold tracking-tight text-foreground group-hover:text-primary-main transition-colors">
+                      {project.title}
+                    </h2>
+                    <p className="mt-2 text-sm text-foreground/70 leading-relaxed">
+                      {project.description}
+                    </p>
+                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary-main">
+                      View project
+                      <span className="transition-transform group-hover:translate-x-1">→</span>
+                    </span>
+                  </div>
+                </Link>
               </motion.article>
             ))}
           </motion.div>
+          )}
         </div>
       </section>
 

@@ -1,0 +1,5 @@
+{"sessionId":"c334df","runId":"initial","hypothesisId":"H1","location":"src/app/api/contact/route.ts:34","message":"contact_validate","data":{"valid":false,"errorsCount":1},"timestamp":1773687710569}
+{"sessionId":"c334df","runId":"initial","hypothesisId":"H1","location":"src/app/api/contact/route.ts:34","message":"contact_validate","data":{"valid":true,"errorsCount":0},"timestamp":1773687720120}
+{"sessionId":"c334df","runId":"initial","hypothesisId":"H1","location":"src/app/api/contact/route.ts:49","message":"contact_email_not_sent","data":{},"timestamp":1773687721496}
+{"sessionId":"c334df","runId":"initial","hypothesisId":"H2","location":"src/app/api/auth/login/route.ts:15","message":"admin_login_request","data":{"hasEmail":true,"hasPassword":true},"timestamp":1773687760834}
+{"sessionId":"c334df","runId":"initial","hypothesisId":"H2","location":"src/app/api/auth/login/route.ts:15","message":"admin_login_request","data":{"hasEmail":true,"hasPassword":true},"timestamp":1773687764192}

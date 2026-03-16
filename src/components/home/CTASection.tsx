@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import type { HomepageContent } from "@/lib/homepage";
 
-export function CTASection() {
+export function CTASection({ content }: { content: HomepageContent["cta"] }) {
   return (
     <section className="relative flex min-h-screen snap-center snap-always items-center justify-center overflow-hidden bg-background">
       {/* Subtle gradient - light from above */}
@@ -19,13 +20,15 @@ export function CTASection() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
           <h2 className="mb-8 text-3xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            Architects & Designers
-            <br />
-            <span className="text-primary-main">Let&apos;s Collaborate</span>
+            {content.headline.split("\n").map((line, i) => (
+              <span key={i}>
+                {i === 1 ? <span className="text-primary-main">{line}</span> : line}
+                {i < content.headline.split("\n").length - 1 && <br />}
+              </span>
+            ))}
           </h2>
           <p className="mb-12 text-lg text-foreground/70 md:text-xl">
-            Bring your vision to light. Connect with our project consultation
-            team.
+            {content.subtext}
           </p>
 
           <motion.div
@@ -41,7 +44,7 @@ export function CTASection() {
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <span>Get in Touch</span>
+                <span>{content.buttonText}</span>
                 <motion.span
                   animate={{ x: [0, 4, 0] }}
                   transition={{

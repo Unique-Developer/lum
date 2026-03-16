@@ -12,5 +12,19 @@
     "slug": "decorative-lighting",
     "image": "/images/categories/decorative-lighting.jpg",
     "order": 1
+  },
+  {
+    "id": "technical-lighting",
+    "name": "Technical Lighting",
+    "slug": "technical-lighting",
+    "image": "/hero-fixture2.jpg",
+    "order": 2
+  },
+  {
+    "id": "custom-lighting",
+    "name": "Custom Lighting",
+    "slug": "custom-lighting",
+    "image": "/hero-fixture2.jpg",
+    "order": 3
   }
 ]

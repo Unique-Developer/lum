@@ -1,0 +1,632 @@
+# Lumin Art Website Architecture
+
+## Brand Positioning
+
+Lumin Art is the design-focused lighting studio of Light House, a 23+ year legacy lighting company based in Surat, India. While Light House serves a wide spectrum of decorative and commercial lighting needs, Lumin Art focuses on architectural lighting, bespoke lighting, and design-driven lighting solutions for architects, interior designers, and premium residences.
+
+---
+
+# 1. Homepage
+
+## Hero Section
+
+Headline:
+Architectural & Bespoke Lighting Studio
+
+Subtext:
+Design-driven lighting solutions for architects, designers and premium residences.
+
+CTA Buttons:
+
+* Explore Projects
+* Start Your Lighting Project
+
+---
+
+## About Lumin Art
+
+Lumin Art is a design-led lighting studio created under the legacy of Light House, a lighting company with more than two decades of industry experience.
+
+Our focus is not just supplying lighting fixtures but shaping how light interacts with architecture. We collaborate with architects and interior designers to create lighting systems that enhance spatial experience, mood, and functionality.
+
+From architectural lighting planning to custom decorative fixtures, our approach blends technical precision with artistic expression.
+
+---
+
+## Lighting Solutions
+
+### Architectural Lighting
+
+Precision lighting solutions designed to highlight architecture, materials, and spatial depth.
+
+### Decorative Lighting
+
+Statement lighting pieces including chandeliers, hanging lights, wall fixtures and feature installations.
+
+### Custom Lighting
+
+Bespoke lighting fixtures developed specifically for interior concepts and architectural projects.
+
+### Technical Lighting
+
+Professional-grade lighting systems including profiles, spotlights, magnetic tracks and recessed solutions.
+
+---
+
+## Featured Projects
+
+Display project images with short descriptions.
+
+Example:
+
+* Luxury Residence Lighting – Surat
+* Modern Villa Lighting – Ahmedabad
+* Premium Apartment Lighting – Mumbai
+* Restaurant Lighting Concept – Surat
+
+Each project should link to detailed project pages.
+
+---
+
+## Custom Lighting Studio
+
+Many architectural projects require lighting fixtures that do not exist in standard catalogues.
+
+Lumin Art develops custom lighting solutions including bespoke chandeliers, fabric lighting installations, sculptural floor lamps, and large-scale statement lighting pieces tailored to interior concepts.
+
+---
+
+## Collaboration with Architects
+
+We actively collaborate with architects and designers during the project planning stage to ensure lighting enhances the architecture rather than being an afterthought.
+
+Our collaboration includes:
+
+* Lighting layout suggestions
+* Fixture selection support
+* Custom lighting development
+* Site coordination
+* After-sales support
+
+---
+
+## Legacy of Light House
+
+Lumin Art operates under Light House, a lighting company with more than 23 years of experience in decorative and commercial lighting.
+
+This legacy provides strong supply chains, technical knowledge, and after-sales service capabilities that support every Lumin Art project.
+
+---
+
+## Contact / Consultation
+
+CTA:
+Start Your Lighting Project
+
+Form fields:
+
+* Project Type
+* Location
+* Architect / Designer Name
+* Project Size
+* Budget Range
+* Contact Information
+
+---
+
+# 2. Studio Page
+
+## Our Philosophy
+
+Lighting is not merely illumination. It shapes perception, defines mood, and enhances architecture.
+
+At Lumin Art, we believe lighting should be planned with the same intent as architecture and interiors. Our work focuses on creating balanced lighting layers that bring out textures, volumes, and spatial depth.
+
+---
+
+## Our Approach
+
+1. Understanding the architecture
+2. Defining lighting layers
+3. Selecting appropriate lighting systems
+4. Integrating decorative elements
+5. Executing with technical precision
+
+---
+
+## Design Principles
+
+* Layered lighting
+* Architectural highlighting
+* Visual comfort
+* Material enhancement
+* Spatial storytelling
+
+---
+
+# 3. Projects Page
+
+Showcase completed and conceptual projects.
+
+Each project page should include:
+
+* Project overview
+* Lighting concept
+* Fixtures used
+* Installation images
+
+Example projects:
+
+* Luxury Residence Lighting
+* Villa Lighting Concept
+* Restaurant Lighting Design
+* Commercial Office Lighting
+
+---
+
+# 4. Lighting Solutions Page
+
+## Architectural Lighting
+
+Lighting designed to complement architectural forms and surfaces.
+
+Includes:
+
+* recessed lighting
+* cove lighting
+* wall washing
+* profile lighting
+
+---
+
+## Decorative Lighting
+
+Statement fixtures that add visual identity to interiors.
+
+Includes:
+
+* chandeliers
+* hanging lights
+* wall lights
+* floor lamps
+
+---
+
+## Technical Lighting
+
+Professional lighting tools used for precise illumination.
+
+Includes:
+
+* spotlights
+* magnetic tracks
+* linear profiles
+* recessed systems
+
+---
+
+## Custom Lighting
+
+Custom-developed lighting pieces tailored to interior concepts.
+
+Includes:
+
+* bespoke chandeliers
+* fabric lighting
+* sculptural installations
+
+---
+
+# 5. For Architects Page
+
+## Lighting Partner for Architects
+
+Lumin Art works closely with architects and interior designers to develop lighting strategies that align with architectural concepts.
+
+Our support includes:
+
+* Lighting consultation
+* Fixture selection
+* Custom fixture development
+* Technical coordination
+* Site support
+
+---
+
+## Why Architects Work With Us
+
+* 23+ years industry experience
+* Access to a wide lighting product ecosystem
+* Custom lighting development
+* Reliable after-sales support
+
+---
+
+# 6. Custom Lighting Page
+
+Custom lighting solutions for projects requiring unique design elements.
+
+We develop bespoke lighting fixtures including:
+
+* sculptural chandeliers
+* fabric lighting structures
+* custom floor lamps
+* architectural installations
+
+Each fixture is developed based on project design intent and interior concept.
+
+---
+
+# 7. About Page
+
+## Our Story
+
+Lumin Art was created as a design-focused lighting studio under Light House, a lighting company with more than two decades of experience.
+
+The goal was to build a platform that goes beyond product selling and focuses on lighting design thinking and architectural integration.
+
+---
+
+## Our Mission
+
+To elevate how lighting is integrated into architecture and interior design.
+
+---
+
+# 8. Contact Page
+
+Contact information
+Showroom address
+Consultation booking form
+Google map integration
+
+# 9. Catalogue and post page
+
+maintain as it is
+
+---
+
+# SEO Pages
+
+Create blog articles targeting:
+
+* architectural lighting design
+* lighting tips for architects
+* lighting layers explained
+* residential lighting planning
+
+Each article should be 800–1200 words.
+
+
+
+------
+In version 1 problem
+
+1. The Biggest Strategic Problem
+
+Right now the site says:
+
+“Light is not a product. It is an experience.”
+
+Nice line. But nothing on the website proves it.
+
+Architects judge lighting companies on:
+
+Projects
+
+Technical knowledge
+
+Product range
+
+Lighting planning ability
+
+Specifications
+
+Case studies
+
+Your website has none of these yet.
+
+So the current perception becomes:
+
+“Nice brand idea but no proof.”
+
+You must fix this first.
+
+2. Homepage Problems (Major UX Issues)
+Problem 1 — Hero section is too vague
+
+Current headline:
+
+Light is not a product. It is an experience.
+
+Good philosophy.
+Bad business communication.
+
+Architects want clarity in 5 seconds.
+
+Replace with something like:
+
+Architectural & Bespoke Lighting Studio
+
+Design-driven lighting solutions for architects, designers and premium residences.
+
+or
+
+Professional Architectural Lighting Studio
+Custom lighting systems for modern interiors and luxury residences.
+
+Problem 2 — No Visual Proof
+
+Your homepage has almost no lighting images.
+
+Lighting website without lighting photos = trust loss.
+
+You need sections like:
+
+Hero project image
+Featured lighting installations
+Product highlights
+Architectural lighting scenes
+
+Minimum:
+
+10–20 high quality images.
+
+Problem 3 — No Projects Section
+
+Architects work with projects, not catalogues.
+
+You need a section:
+
+Projects
+
+Example:
+
+Luxury Residence — Surat
+Penthouse — Mumbai
+Villa Lighting — Ahmedabad
+Restaurant — Surat
+Office — Commercial Project
+
+Each project page should show:
+
+• Lighting concept
+• Products used
+• Lighting layout
+• Installation photos
+
+This is the most important page for architect conversion.
+
+3. Missing Pages (Huge SEO Loss)
+
+Your website currently has almost no SEO structure.
+
+You need these pages:
+
+Core Pages
+
+Home
+About
+Studio
+Projects
+Products
+Services
+Contact
+
+Service Pages (Very important)
+
+Architects search for services like:
+
+architectural lighting design
+lighting consultation
+custom lighting
+bespoke chandeliers
+technical lighting solutions
+
+Create pages like:
+
+Architectural Lighting Design
+
+Technical Lighting
+
+Decorative Lighting
+
+Custom Lighting Fixtures
+
+Lighting Consultation for Architects
+
+Each page = SEO landing page
+
+4. Your Content is Too Short
+
+Your entire website probably has under 500 words.
+
+Google prefers 1500–3000 words across pages.
+
+Example content sections you should add:
+
+Lighting Philosophy
+
+Explain:
+
+importance of light layers
+
+mood creation
+
+architectural lighting principles
+
+technical vs decorative lighting
+
+Lighting Design Process
+
+Example:
+
+Step 1 — Concept consultation
+Step 2 — Lighting layout
+Step 3 — Fixture selection
+Step 4 — Mockups & samples
+Step 5 — Installation support
+
+Architects love structured processes.
+
+5. SEO Problems
+
+Your current site likely has almost zero search traffic.
+
+You need keyword pages targeting:
+
+architectural lighting india
+luxury lighting studio india
+custom chandeliers india
+lighting design studio india
+bespoke lighting india
+architectural lighting consultant surat
+
+Each page must include:
+
+• headings
+• images
+• 800–1200 words
+
+6. Brand Positioning Problem
+
+Right now your messaging is confused between:
+
+Light House
+
+Lumin Art
+
+Economy lighting
+
+Professional lighting
+
+Your site says:
+
+Economy range lighting leader.
+
+That line destroys premium positioning.
+
+Never mix economy with design studio.
+
+Instead say:
+
+“A Light House Studio”
+
+or
+
+“From the House of Light House — since 2001.”
+
+7. Navigation Problem
+
+Your menu currently looks minimal:
+
+Catalogue
+Posts
+About
+Studio
+Projects
+Contact
+
+Better structure:
+
+Home
+Studio
+Projects
+Lighting Solutions
+Custom Lighting
+For Architects
+About
+Contact
+8. You Need an “Architect Page”
+
+This page will convert architects.
+
+Title:
+
+Lighting Partner for Architects
+
+Content:
+
+collaboration process
+
+lighting layout support
+
+custom fixture manufacturing
+
+technical lighting selection
+
+site support
+
+Add downloadable catalogue + specification sheets.
+
+9. No Lead Capture System
+
+Your site currently only has contact.
+
+You need lead magnets like:
+
+Download Lighting Design Guide
+Download Product Catalogue
+Book Lighting Consultation
+Get Project Lighting Proposal
+10. No Authority Signals
+
+Architects trust:
+
+• certifications
+• project photos
+• client logos
+• testimonials
+
+Add sections like:
+
+Trusted by Architects & Designers
+23+ years legacy (Light House)
+1000+ completed lighting projects
+11. Visual Identity Opportunity
+
+Your brand name Lumin Art is powerful.
+
+The website design should reflect:
+
+Architectural minimalism
+
+Examples of inspiration:
+
+Flos
+
+Delta Light
+
+Vibia
+
+Bocci
+
+Artemide
+
+Design style:
+
+Black
+White
+Neutral
+Huge photography
+Minimal text
+Editorial layout
+12. Microcopy Fixes
+
+Change these:
+
+Current
+
+Light is not a product.
+
+Better
+
+Light defines architecture.
+
+Current
+
+Architectural & Decorative Lighting
+
+Better
+
+Architectural, Technical & Bespoke Lighting Systems
