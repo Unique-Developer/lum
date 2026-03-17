@@ -52,9 +52,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid url" }, { status: 403 });
     }
 
+    const range = request.headers.get("range");
+    const upstreamHeaders: Record<string, string> = {
+      "User-Agent": "LuminArt-Catalogue-Viewer/1.0",
+    };
+    if (range) upstreamHeaders["Range"] = range;
+
+    // Non-range (initial) requests may take longer (cold storage, large PDFs).
+    // If we abort too aggressively, Next will throw "failed to pipe response".
+    const timeoutMs = range ? 30_000 : 120_000;
     const res = await fetch(targetUrl, {
-      headers: { "User-Agent": "LuminArt-Catalogue-Viewer/1.0" },
-      signal: AbortSignal.timeout(30000),
+      headers: upstreamHeaders,
+      signal: AbortSignal.timeout(timeoutMs),
     });
 
     if (!res.ok) {
@@ -65,17 +74,33 @@ export async function GET(request: NextRequest) {
     }
 
     const contentType = res.headers.get("content-type") ?? "application/pdf";
-    const buffer = await res.arrayBuffer();
-    if (!buffer || buffer.byteLength === 0) {
-      return NextResponse.json({ error: "No body" }, { status: 502 });
+    const headers: Record<string, string> = {
+      "Content-Type": contentType,
+      // PDF.js + iOS Safari behave better when Range requests are supported end-to-end.
+      "Accept-Ranges": "bytes",
+      // Cache for a bit; catalogue updates are infrequent but not immutable.
+      "Cache-Control": "public, max-age=3600",
+    };
+
+    const upstreamContentRange = res.headers.get("content-range");
+    const upstreamContentLength = res.headers.get("content-length");
+    if (upstreamContentRange) headers["Content-Range"] = upstreamContentRange;
+    if (upstreamContentLength) headers["Content-Length"] = upstreamContentLength;
+
+    // Stream the response through (important for large PDFs and iOS).
+    const status = res.status;
+
+    if (!res.body) {
+      const buffer = await res.arrayBuffer();
+      if (!buffer || buffer.byteLength === 0) {
+        return NextResponse.json({ error: "No body" }, { status: 502 });
+      }
+      return new NextResponse(buffer, { status, headers });
     }
 
-    return new NextResponse(buffer, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "public, max-age=3600",
-      },
+    return new NextResponse(res.body, {
+      status,
+      headers,
     });
   } catch (e) {
     console.warn("PDF proxy error:", e);

@@ -29,18 +29,23 @@ function getEffectivePdfUrl(pdfUrl: string): string {
       const isR2 = host.endsWith(".r2.dev") || host.includes("r2.dev");
       const isB2 = host.includes("backblazeb2.com");
       const pathParts = u.pathname.split("/").filter(Boolean);
-      const key =
-        pathParts.length >= 1
-          ? pathParts[0] === "catalogue"
-            ? pathParts.join("/")
-            : pathParts.length >= 2
-              ? pathParts.slice(1).join("/")
-              : pathParts[0]
-          : null;
+      const key = (() => {
+        if (pathParts.length === 0) return null;
+        // Backblaze B2 public URLs are typically: /file/<bucket>/<key...>
+        if (isB2 && pathParts[0] === "file" && pathParts.length >= 3) {
+          return pathParts.slice(2).join("/");
+        }
+        // R2 public/custom domain: key is simply the path without leading slash.
+        return pathParts.join("/");
+      })();
 
-      // 1) Mobile Safari: proxy R2 and B2 to avoid iOS streaming/CORS issues
-      if (isMobileSafari && (isR2 || isB2) && key) {
-        return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
+      // 1) Mobile Safari: always proxy to avoid iOS PDF streaming/CORS quirks.
+      // Prefer the shorter `key=` form when possible (requires R2_PUBLIC_BASE_URL).
+      if (isMobileSafari) {
+        if ((isR2 || isB2) && key) {
+          return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
+        }
+        return `/api/catalogue/pdf?url=${encodeURIComponent(pdfUrl)}`;
       }
 
       // 2) Desktop/tablet: load R2 directly for speed
