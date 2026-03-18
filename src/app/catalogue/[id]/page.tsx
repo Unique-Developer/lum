@@ -92,13 +92,16 @@ export default async function CatalogueSlugPage({ params }: Props) {
         <SiteHeader />
         <section className="px-4 py-8 sm:px-6 sm:py-12">
           <div className="mx-auto w-full max-w-6xl">
-            <Link href="/catalogue" className="mb-8 inline-flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground transition-colors">
+            <Link
+              href="/catalogue"
+              className="mb-5 inline-flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground sm:mb-8"
+            >
               ← Back to Catalogues
             </Link>
             <h1 className="mb-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               {catalogue.title}
             </h1>
-            <p className="mb-6 text-sm text-foreground/70 sm:mb-12 sm:text-base">
+            <p className="mb-4 text-sm text-foreground/70 sm:mb-8 sm:text-base">
               {catalogue.description}
             </p>
             <FlipbookViewer pdfUrl={catalogue.pdfUrl} title={catalogue.title} />

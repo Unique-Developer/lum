@@ -21,7 +21,7 @@ export function LightHouseLegacySection({ content }: { content: HomepageContent[
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[200vh] overflow-hidden bg-background"
+      className="relative min-h-[150vh] overflow-hidden bg-background"
     >
       {/* Sticky background (replaces 3D canvas to avoid React/Three.js conflict) */}
       <div className="sticky top-0 h-screen">
@@ -36,16 +36,16 @@ export function LightHouseLegacySection({ content }: { content: HomepageContent[
       {/* Content overlay - milestones revealed on scroll */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <motion.div
-          className="max-w-2xl px-6 text-center"
+          className="max-w-2xl px-5 text-center md:px-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="mb-12 text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
+          <h2 className="mb-8 text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
             {content.title}
           </h2>
-          <p className="mb-16 text-lg text-foreground/80 md:text-xl">
+          <p className="mb-10 text-lg text-foreground/80 md:text-xl">
             {content.subtitle.split("\n").map((line, i) => (
               <span key={i}>
                 {line}
@@ -54,11 +54,11 @@ export function LightHouseLegacySection({ content }: { content: HomepageContent[
             ))}
           </p>
 
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+          <div className="flex flex-wrap justify-center gap-5 md:gap-8">
             {content.milestones.map((m, i) => (
               <motion.div
                 key={m.year}
-                className="rounded-2xl border border-primary-main/20 bg-background/80 px-6 py-4 backdrop-blur-sm"
+                className="rounded-2xl border border-primary-main/20 bg-background/80 px-5 py-3 backdrop-blur-sm"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}

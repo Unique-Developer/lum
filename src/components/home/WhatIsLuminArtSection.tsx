@@ -5,35 +5,33 @@ import type { HomepageContent } from "@/lib/homepage";
 
 export function WhatIsLuminArtSection({ content }: { content: HomepageContent["whatIsLuminArt"] }) {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-background py-24 md:py-32">
+    <section className="relative overflow-hidden bg-background py-14 md:py-20">
       {/* Subtle gradient background (replaces 3D canvas to avoid React/Three.js conflict) */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-40 bg-gradient-to-b from-primary-main/10 via-transparent to-primary-main/5" />
 
       <div className="relative z-10 mx-auto max-w-6xl px-6">
         {/* Section header - Brand name with light beam feel */}
         <motion.div
-          className="mb-16 text-center md:mb-24"
+          className="mb-10 text-center md:mb-14"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="mb-4 text-4xl font-semibold tracking-tight text-foreground md:text-6xl lg:text-7xl">
-            <span className="bg-gradient-to-b from-foreground to-foreground/80 bg-clip-text text-transparent">
-              {content.brandName}
-            </span>
+          <h2 className="mb-4 text-3xl font-semibold tracking-tight text-foreground md:text-5xl">
+            {content.brandName}
           </h2>
-          <p className="text-primary-main text-xl font-medium md:text-2xl">
+          <p className="mx-auto max-w-3xl text-base text-foreground/70 md:text-xl">
             {content.tagline}
           </p>
         </motion.div>
 
         {/* Pillars grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {content.pillars.map((pillar, i) => (
             <motion.div
               key={pillar.title}
-              className="group relative rounded-2xl border border-primary-main/15 bg-background/70 p-6 backdrop-blur-sm transition-colors hover:border-primary-main/30 hover:bg-background/90"
+              className="group relative rounded-2xl border border-primary-main/15 bg-background/70 p-5 backdrop-blur-sm transition-colors hover:border-primary-main/30 hover:bg-background/90"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-30px" }}

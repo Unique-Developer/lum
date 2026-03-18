@@ -24,7 +24,14 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    let { name, image, description, includes } = body;
+    const { name, image, description, includes: rawIncludes } = body as {
+      name?: unknown;
+      image?: unknown;
+      description?: unknown;
+      includes?: unknown;
+    };
+
+    let includes = rawIncludes;
     if (typeof includes === "string") {
       includes = includes
         .split("\n")

@@ -6,7 +6,7 @@ import type { HomepageContent } from "@/lib/homepage";
 
 export function CTASection({ content }: { content: HomepageContent["cta"] }) {
   return (
-    <section className="relative flex min-h-screen snap-center snap-always items-center justify-center overflow-hidden bg-background">
+    <section className="relative flex min-h-[72vh] items-center justify-center overflow-hidden bg-background py-14 md:py-20">
       {/* Subtle gradient - light from above */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary-main/5 via-transparent to-transparent" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(17,79,117,0.06)_0%,transparent_70%)]" />
@@ -19,7 +19,7 @@ export function CTASection({ content }: { content: HomepageContent["cta"] }) {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-          <h2 className="mb-8 text-3xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+          <h2 className="mb-6 text-3xl font-semibold tracking-tight text-foreground md:text-5xl lg:text-6xl">
             {content.headline.split("\n").map((line, i) => (
               <span key={i}>
                 {i === 1 ? <span className="text-primary-main">{line}</span> : line}
@@ -27,7 +27,7 @@ export function CTASection({ content }: { content: HomepageContent["cta"] }) {
               </span>
             ))}
           </h2>
-          <p className="mb-12 text-lg text-foreground/70 md:text-xl">
+          <p className="mb-8 text-lg text-foreground/70 md:text-xl">
             {content.subtext}
           </p>
 

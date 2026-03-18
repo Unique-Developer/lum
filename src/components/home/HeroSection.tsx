@@ -46,7 +46,7 @@ export function HeroSection({ content }: { content: HomepageContent["hero"] }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Link href="/projects">
+          <Link href="/lighting-solutions">
             <motion.span
               className="inline-flex items-center gap-2 rounded-full border-2 border-primary-main bg-primary-main px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-primary-main/90 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 focus:ring-offset-background"
               whileHover={{ scale: 1.03 }}
@@ -84,7 +84,7 @@ export function HeroSection({ content }: { content: HomepageContent["hero"] }) {
             ease: "easeInOut",
           }}
         >
-          <span className="text-xs uppercase tracking-widest text-white/70">
+          <span className="text-xs uppercase tracking-widest text-foreground/85">
             {content.scrollLabel}
           </span>
           <div className="h-10 w-px bg-gradient-to-b from-primary-main to-transparent" />

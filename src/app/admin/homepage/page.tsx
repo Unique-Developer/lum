@@ -237,7 +237,7 @@ export default function AdminHomepagePage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>CTA: Explore Projects</label>
+              <label className={labelClass}>CTA: Explore Lighting Solutions</label>
               <input
                 type="text"
                 value={content.hero.ctaExploreProjects}

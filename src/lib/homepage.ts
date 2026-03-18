@@ -57,7 +57,7 @@ const DEFAULTS: HomepageContent = {
     subtext: "Design-driven lighting solutions for architects, designers and premium residences.",
     heroImage: "/hero-fixture2.jpg",
     heroImageAlt: "Architectural lighting installation",
-    ctaExploreProjects: "Explore Projects",
+    ctaExploreProjects: "Explore Lighting Solutions",
     ctaStartProject: "Start Your Lighting Project",
     scrollLabel: "Scroll",
   },
@@ -91,8 +91,8 @@ const DEFAULTS: HomepageContent = {
       ],
     },
     architecturalScenes: {
-      title: "Architectural lighting scenes",
-      description: "Surface, volume, and circulation — scenes that show how light supports architecture.",
+      title: "Not Off-the-Shelf. Made for You.",
+      description: "Tailor-made lighting pieces crafted to complement your architecture, not compromise it.",
       images: [
         { src: "https://images.unsplash.com/photo-1496307653780-42ee777d4833?auto=format&fit=crop&w=1600&q=80", alt: "Architectural facade lighting at night" },
         { src: "https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?auto=format&fit=crop&w=1600&q=80", alt: "Minimal interior lighting with strong lines" },
@@ -131,13 +131,13 @@ const DEFAULTS: HomepageContent = {
     },
   },
   whatIsLuminArt: {
-    brandName: "Lumin Art",
-    tagline: "Design-Driven Lighting Studio",
+    brandName: "Lighting That Defines Architecture",
+    tagline: "We don't sell lights. We shape how spaces feel, function, and get remembered.",
     pillars: [
-      { title: "Architectural Lighting", description: "Designed for spaces that demand precision and atmosphere." },
-      { title: "Technical Lighting", description: "Engineered solutions for performance and longevity." },
-      { title: "Customized Fancy Lights", description: "Bespoke fixtures tailored to your vision." },
-      { title: "Project Consultation", description: "Expert guidance from concept to installation." },
+      { title: "Design-Driven Lighting", description: "Not just fixtures - curated lighting that enhances spatial storytelling." },
+      { title: "Precision Engineering", description: "Every product is selected or built for performance, longevity, and consistency." },
+      { title: "Bespoke Creations", description: "Custom lights designed exactly to match your concept - not adjusted, but created." },
+      { title: "End-to-End Collaboration", description: "From drawings to execution - we work with you, not just supply to you." },
     ],
   },
   cta: {
@@ -167,9 +167,62 @@ function deepMerge<T extends object>(target: T, source: Partial<T> | null | unde
   return result;
 }
 
+function isLegacyWhatIsLuminArt(
+  value: Partial<HomepageContent["whatIsLuminArt"]> | undefined
+): boolean {
+  if (!value) return false;
+  const title = String(value.brandName ?? "").trim();
+  const subtitle = String(value.tagline ?? "").trim();
+  const firstPillar = String(value.pillars?.[0]?.title ?? "").trim();
+  return (
+    title === "Lumin Art" ||
+    subtitle === "Design-Driven Lighting Studio" ||
+    firstPillar === "Architectural Lighting"
+  );
+}
+
+function isLegacyArchitecturalScenes(
+  value: Partial<HomepageContent["visualProof"]["architecturalScenes"]> | undefined
+): boolean {
+  if (!value) return false;
+  const title = String(value.title ?? "").trim();
+  const description = String(value.description ?? "").trim();
+  return (
+    title === "Architectural lighting scenes" ||
+    description === "Surface, volume, and circulation — scenes that show how light supports architecture."
+  );
+}
+
+function isLegacyHeroExploreCta(
+  value: Partial<HomepageContent["hero"]> | undefined
+): boolean {
+  if (!value) return false;
+  return String(value.ctaExploreProjects ?? "").trim() === "Explore Projects";
+}
+
 export async function getHomepageContent(): Promise<HomepageContent> {
   const saved = await readSiteSetting<Partial<HomepageContent>>(KEY);
-  return deepMerge(DEFAULTS, saved);
+  if (!saved) return DEFAULTS;
+
+  const merged = deepMerge(DEFAULTS, saved);
+
+  // Migrate legacy "What Is Lumin Art" copy to the new section copy.
+  if (isLegacyWhatIsLuminArt(saved.whatIsLuminArt)) {
+    merged.whatIsLuminArt = DEFAULTS.whatIsLuminArt;
+  }
+
+  // Migrate legacy architectural-scenes copy to customized-products messaging.
+  if (isLegacyArchitecturalScenes(saved.visualProof?.architecturalScenes)) {
+    merged.visualProof.architecturalScenes.title = DEFAULTS.visualProof.architecturalScenes.title;
+    merged.visualProof.architecturalScenes.description = DEFAULTS.visualProof.architecturalScenes.description;
+  }
+
+  // Migrate old hero button copy to the newer premium CTA label.
+  if (isLegacyHeroExploreCta(saved.hero)) {
+    merged.hero.ctaExploreProjects = DEFAULTS.hero.ctaExploreProjects;
+  }
+
+  return merged;
 }
 
 export async function saveHomepageContent(updates: Partial<HomepageContent>): Promise<void> {

@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const SCALE = 1.0;
 const JPEG_QUALITY = 0.75;
 const SWIPE_THRESHOLD_PX = 60;
+const LANDSCAPE_ASPECT_RATIO = "4 / 3";
+const PORTRAIT_ASPECT_RATIO = "3 / 4";
 
 /**
  * Decide how to load the PDF:
@@ -80,6 +82,8 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   const [totalPages, setTotalPages] = useState(50);
   const [pageCache, setPageCache] = useState<Record<number, string>>({});
   const [docReady, setDocReady] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
+  const [navDirection, setNavDirection] = useState<1 | -1>(1);
   const [error, setError] = useState<string | null>(null);
   const [loadingPage, setLoadingPage] = useState<number | null>(1);
   const pdfDocRef = useRef<import("pdfjs-dist").PDFDocumentProxy | null>(null);
@@ -134,6 +138,15 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
         const doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
         if (cancelled) return;
         pdfDocRef.current = doc;
+        try {
+          const firstPage = await doc.getPage(1);
+          if (!cancelled) {
+            const firstPageViewport = firstPage.getViewport({ scale: 1 });
+            setIsLandscape(firstPageViewport.width >= firstPageViewport.height);
+          }
+        } catch {
+          if (!cancelled) setIsLandscape(false);
+        }
         const numPages = Math.min(doc.numPages, 50);
         setTotalPages(numPages);
         setDocReady(true);
@@ -156,8 +169,14 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
     if (currentPage < totalPages) ensurePage(currentPage + 1, false);
   }, [docReady, error, currentPage, totalPages, ensurePage]);
 
-  const goPrev = () => setCurrentPage((p) => Math.max(1, p - 1));
-  const goNext = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
+  const goPrev = () => {
+    setNavDirection(-1);
+    setCurrentPage((p) => Math.max(1, p - 1));
+  };
+  const goNext = () => {
+    setNavDirection(1);
+    setCurrentPage((p) => Math.min(totalPages, p + 1));
+  };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!e.touches[0]) return;
@@ -173,6 +192,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
     const endTouch = e.changedTouches[0];
     const deltaX = start.x - endTouch.clientX;
     const deltaY = start.y - endTouch.clientY;
+    touchStart.current = null;
 
     // Only treat as a swipe if the gesture is mostly horizontal
     if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
@@ -186,15 +206,21 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
     }
   };
 
+  const handleTouchCancel = () => {
+    touchStart.current = null;
+  };
+
   const currentImage = pageCache[currentPage];
   const isPageLoading = loadingPage !== null && !currentImage;
+  const containerAspectRatio = isLandscape ? LANDSCAPE_ASPECT_RATIO : PORTRAIT_ASPECT_RATIO;
+  const containerMaxWidthClassName = isLandscape ? "max-w-6xl" : "max-w-4xl";
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-0 sm:px-2">
+    <div className={`mx-auto w-full ${containerMaxWidthClassName} px-0 sm:px-2`}>
       <div
         className="relative flex min-h-[260px] w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-foreground/5"
         style={{
-          aspectRatio: "3/4",
+          aspectRatio: containerAspectRatio,
           maxHeight: "min(76vh, calc(100svh - 220px))",
         }}
       >
@@ -222,13 +248,13 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
           ) : (
             <motion.div
               key={currentPage}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: navDirection === 1 ? 20 : -20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              exit={{ opacity: 0, x: navDirection === 1 ? -20 : 20 }}
               transition={{ duration: 0.3 }}
               className="flex h-full min-h-0 w-full items-center justify-center p-4 sm:p-6 md:p-8 cursor-grab active:cursor-grabbing"
-              onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchCancel}
             >
               {currentImage ? (
                 // eslint-disable-next-line @next/next/no-img-element -- data URL from PDF.js canvas
@@ -236,6 +262,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
                   src={currentImage}
                   alt={`Page ${currentPage} of ${title}`}
                   className="max-h-full max-w-full object-contain shadow-lg"
+                  onTouchStart={handleTouchStart}
                 />
               ) : isPageLoading ? (
                 <div className="flex h-3/4 w-3/4 items-center justify-center rounded-lg border border-foreground/10 bg-foreground/5">

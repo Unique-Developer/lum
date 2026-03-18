@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { HomepageImageItem } from "@/lib/homepage";
@@ -18,7 +19,7 @@ function ImageCard({
   const card = (
     <div
       className={[
-        "group relative overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02]",
+        "group relative h-full overflow-hidden rounded-[1.25rem] border border-white/60 bg-white/40 shadow-[0_10px_35px_-20px_rgba(17,79,117,0.55)] ring-1 ring-black/[0.02] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_45px_-24px_rgba(17,79,117,0.65)]",
         url ? "cursor-pointer" : "",
         className ?? "",
       ].join(" ")}
@@ -27,12 +28,12 @@ function ImageCard({
       <img
         src={img.src}
         alt={img.alt}
-        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.08]"
         loading="lazy"
       />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/10 opacity-90" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-transparent opacity-95 transition-opacity duration-500 group-hover:opacity-100" />
       {img.label && (
-        <div className="absolute left-4 top-4 inline-flex items-center rounded-full bg-black/35 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur">
+        <div className="absolute left-4 top-4 inline-flex items-center rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur-md shadow-sm">
           {img.label}
         </div>
       )}
@@ -50,16 +51,29 @@ function ImageCard({
 
 export function VisualProofSection({ content }: { content: HomepageContent["visualProof"] }) {
   const { featuredInstallations, productHighlights, architecturalScenes } = content;
+  const featuredTrackRef = useRef<HTMLDivElement>(null);
+  const productTrackRef = useRef<HTMLDivElement>(null);
+  const scenesTrackRef = useRef<HTMLDivElement>(null);
+
+  const scrollTrack = (ref: React.RefObject<HTMLDivElement | null>, direction: "left" | "right") => {
+    const el = ref.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.82;
+    el.scrollBy({
+      left: direction === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
 
   return (
-    <section className="px-6 py-16 md:py-24">
+    <section className="px-5 py-10 md:px-6 md:py-14">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.25 }}
           transition={{ duration: 0.7 }}
-          className="mb-10 md:mb-14"
+          className="mb-8 md:mb-10"
         >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-main">
             {content.eyebrow}
@@ -73,8 +87,8 @@ export function VisualProofSection({ content }: { content: HomepageContent["visu
         </motion.div>
 
         {/* Featured installations */}
-        <div className="mb-14 md:mb-16">
-          <div className="mb-6 flex items-end justify-between gap-6">
+        <div className="mb-10 overflow-hidden rounded-3xl border border-foreground/10 bg-gradient-to-br from-primary-soft/60 via-white to-white p-4 shadow-[0_25px_70px_-45px_rgba(17,79,117,0.75)] md:mb-12 md:p-6">
+          <div className="mb-4 flex items-end justify-between gap-4">
             <div>
               <h3 className="text-xl font-semibold tracking-tight text-foreground">
                 {featuredInstallations.title}
@@ -83,26 +97,61 @@ export function VisualProofSection({ content }: { content: HomepageContent["visu
                 {featuredInstallations.description}
               </p>
             </div>
-            <Link
-              href="/projects"
-              className="hidden text-sm font-semibold text-primary-main hover:underline md:inline"
-            >
-              {content.linkExploreProjects} →
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scrollTrack(featuredTrackRef, "left")}
+                className="hidden h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-white/85 text-lg text-foreground/70 transition-colors hover:border-primary-main/35 hover:text-primary-main md:inline-flex"
+                aria-label="Scroll featured installations left"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTrack(featuredTrackRef, "right")}
+                className="hidden h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-white/85 text-lg text-foreground/70 transition-colors hover:border-primary-main/35 hover:text-primary-main md:inline-flex"
+                aria-label="Scroll featured installations right"
+              >
+                →
+              </button>
+              <Link
+                href="/projects"
+                className="hidden text-sm font-semibold text-primary-main hover:underline md:inline"
+              >
+                {content.linkExploreProjects} →
+              </Link>
+            </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredInstallations.images.map((img) => (
-              <div key={img.src} className="aspect-[4/3]">
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-12 bg-gradient-to-r from-white via-white/85 to-transparent sm:block" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-12 bg-gradient-to-l from-white via-white/85 to-transparent sm:block" />
+            <div className="mb-3 text-xs font-medium uppercase tracking-[0.16em] text-foreground/45 sm:hidden">
+              Swipe to explore
+            </div>
+            <div
+              ref={featuredTrackRef}
+              className="grid snap-x snap-mandatory grid-flow-col auto-cols-[84%] gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:auto-cols-[calc((100%-1rem)/2)] sm:gap-4 lg:auto-cols-[calc((100%-3rem)/4)]"
+            >
+              {featuredInstallations.images.map((img, index) => (
+                <motion.div
+                  key={img.src}
+                  className="aspect-[4/3] snap-start"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ duration: 0.55, ease: "easeOut", delay: index * 0.05 }}
+                >
                 <ImageCard img={img} className="h-full w-full" />
-              </div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Product highlights */}
-        <div className="mb-14 md:mb-16">
-          <div className="mb-6 flex items-end justify-between gap-6">
+        <div className="mb-10 md:mb-12">
+          <div className="mb-4 flex items-end justify-between gap-4">
             <div>
               <h3 className="text-xl font-semibold tracking-tight text-foreground">
                 {productHighlights.title}
@@ -111,27 +160,50 @@ export function VisualProofSection({ content }: { content: HomepageContent["visu
                 {productHighlights.description}
               </p>
             </div>
-            <Link
-              href="/catalogue"
-              className="hidden text-sm font-semibold text-primary-main hover:underline md:inline"
-            >
-              {content.linkViewCatalogue} →
-            </Link>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scrollTrack(productTrackRef, "left")}
+                className="hidden h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-white/85 text-lg text-foreground/70 transition-colors hover:border-primary-main/35 hover:text-primary-main md:inline-flex"
+                aria-label="Scroll product highlights left"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTrack(productTrackRef, "right")}
+                className="hidden h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-white/85 text-lg text-foreground/70 transition-colors hover:border-primary-main/35 hover:text-primary-main md:inline-flex"
+                aria-label="Scroll product highlights right"
+              >
+                →
+              </button>
+              <Link
+                href="/catalogue"
+                className="hidden text-sm font-semibold text-primary-main hover:underline md:inline"
+              >
+                {content.linkViewCatalogue} →
+              </Link>
+            </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="grid gap-4 sm:grid-cols-2">
-              {productHighlights.images.slice(0, 2).map((img, i) => (
-                <div key={img.src + String(i)} className="aspect-[4/3]">
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-12 bg-gradient-to-r from-white via-white/85 to-transparent sm:block" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-12 bg-gradient-to-l from-white via-white/85 to-transparent sm:block" />
+            <div
+              ref={productTrackRef}
+              className="grid snap-x snap-mandatory grid-flow-col auto-cols-[84%] gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:auto-cols-[calc((100%-1rem)/2)] sm:gap-4 lg:auto-cols-[calc((100%-3rem)/4)]"
+            >
+              {productHighlights.images.map((img, i) => (
+                <motion.div
+                  key={img.src + String(i)}
+                  className="aspect-[4/3] snap-start"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ duration: 0.55, ease: "easeOut", delay: i * 0.05 }}
+                >
                   <ImageCard img={img} className="h-full w-full" clickable />
-                </div>
-              ))}
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {productHighlights.images.slice(2, 4).map((img, i) => (
-                <div key={img.src + String(i)} className="aspect-[4/3]">
-                  <ImageCard img={img} className="h-full w-full" clickable />
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -139,21 +211,55 @@ export function VisualProofSection({ content }: { content: HomepageContent["visu
 
         {/* Architectural scenes */}
         <div>
-          <div className="mb-6">
-            <h3 className="text-xl font-semibold tracking-tight text-foreground">
-              {architecturalScenes.title}
-            </h3>
-            <p className="mt-2 text-sm text-foreground/70">
-              {architecturalScenes.description}
-            </p>
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-semibold tracking-tight text-foreground">
+                {architecturalScenes.title}
+              </h3>
+              <p className="mt-2 text-sm text-foreground/70">
+                {architecturalScenes.description}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scrollTrack(scenesTrackRef, "left")}
+                className="hidden h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-white/85 text-lg text-foreground/70 transition-colors hover:border-primary-main/35 hover:text-primary-main md:inline-flex"
+                aria-label="Scroll architectural scenes left"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTrack(scenesTrackRef, "right")}
+                className="hidden h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-white/85 text-lg text-foreground/70 transition-colors hover:border-primary-main/35 hover:text-primary-main md:inline-flex"
+                aria-label="Scroll architectural scenes right"
+              >
+                →
+              </button>
+            </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {architecturalScenes.images.map((img) => (
-              <div key={img.src} className="aspect-[16/11]">
-                <ImageCard img={img} className="h-full w-full" />
-              </div>
-            ))}
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-12 bg-gradient-to-r from-white via-white/85 to-transparent sm:block" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-12 bg-gradient-to-l from-white via-white/85 to-transparent sm:block" />
+            <div
+              ref={scenesTrackRef}
+              className="grid snap-x snap-mandatory grid-flow-col auto-cols-[84%] gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:auto-cols-[calc((100%-1rem)/2)] sm:gap-4 lg:auto-cols-[calc((100%-2rem)/3)]"
+            >
+              {architecturalScenes.images.map((img, index) => (
+                <motion.div
+                  key={img.src}
+                  className="aspect-[16/11] snap-start"
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ duration: 0.55, ease: "easeOut", delay: index * 0.05 }}
+                >
+                  <ImageCard img={img} className="h-full w-full" />
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
