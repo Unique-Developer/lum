@@ -3,7 +3,9 @@
     {
       "AllowedOrigins": [
         "https://theluminart.com",
+        "http://theluminart.com",
         "https://www.theluminart.com",
+        "http://www.theluminart.com",
         "http://localhost:3000"
       ],
       "AllowedMethods": ["GET", "PUT", "HEAD"],
