@@ -8,6 +8,11 @@ const JPEG_QUALITY = 0.75;
 const SWIPE_THRESHOLD_PX = 60;
 const LANDSCAPE_ASPECT_RATIO = "4 / 3";
 const PORTRAIT_ASPECT_RATIO = "3 / 4";
+const PAGE_LIMIT = (() => {
+  const raw = process.env.NEXT_PUBLIC_PDF_PAGE_LIMIT;
+  const n = raw ? Number(raw) : 0;
+  return Number.isFinite(n) && n > 0 ? n : null;
+})();
 
 /**
  * Decide how to load the PDF:
@@ -79,7 +84,7 @@ type FlipbookViewerProps = {
 export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   const effectivePdfUrl = getEffectivePdfUrl(pdfUrl);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(50);
+  const [totalPages, setTotalPages] = useState(1);
   const [pageCache, setPageCache] = useState<Record<number, string>>({});
   const [docReady, setDocReady] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
@@ -147,7 +152,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
         } catch {
           if (!cancelled) setIsLandscape(false);
         }
-        const numPages = Math.min(doc.numPages, 50);
+        const numPages = PAGE_LIMIT ? Math.min(doc.numPages, PAGE_LIMIT) : doc.numPages;
         setTotalPages(numPages);
         setDocReady(true);
       } catch (e) {
