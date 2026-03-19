@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const SCALE = 1.0;
 const JPEG_QUALITY = 0.75;
-const SWIPE_THRESHOLD_PX = 60;
+const SWIPE_THRESHOLD_PX = 100;
+const HORIZONTAL_BIAS = 2;
 const LANDSCAPE_ASPECT_RATIO = "4 / 3";
 const PORTRAIT_ASPECT_RATIO = "3 / 4";
 const PAGE_LIMIT = (() => {
@@ -14,21 +15,23 @@ const PAGE_LIMIT = (() => {
   return Number.isFinite(n) && n > 0 ? n : null;
 })();
 
+/** Detect iOS (iPhone/iPad) - includes Safari, Chrome, and all WebKit browsers on iOS. */
+function isIOS(): boolean {
+  return (
+    typeof navigator !== "undefined" &&
+    /iP(ad|hone|od)/.test(navigator.userAgent)
+  );
+}
+
 /**
  * Decide how to load the PDF:
- * - Mobile Safari (iPhone/iPad): always proxy R2/B2 via /api/catalogue/pdf (avoids
- *   cross-origin PDF streaming issues that cause "keeps loading" on iOS).
+ * - iOS (all browsers): always proxy R2/B2 via /api/catalogue/pdf (avoids
+ *   cross-origin PDF streaming issues that cause "keeps loading" on iPhone).
  * - Desktop/tablet: load R2 directly for speed; B2 still proxied.
  * - Other external URLs: proxy by full url.
  * - Relative URLs: use as-is.
  */
 function getEffectivePdfUrl(pdfUrl: string): string {
-  const isMobileSafari =
-    typeof navigator !== "undefined" &&
-    /iP(ad|hone|od)/.test(navigator.userAgent) &&
-    /Safari/.test(navigator.userAgent) &&
-    !/Chrome/.test(navigator.userAgent);
-
   if (pdfUrl.startsWith("http://") || pdfUrl.startsWith("https://")) {
     try {
       const u = new URL(pdfUrl);
@@ -46,9 +49,9 @@ function getEffectivePdfUrl(pdfUrl: string): string {
         return pathParts.join("/");
       })();
 
-      // 1) Mobile Safari: always proxy to avoid iOS PDF streaming/CORS quirks.
+      // 1) iOS (Safari, Chrome, etc.): always proxy to avoid PDF streaming/CORS quirks.
       // Prefer the shorter `key=` form when possible (requires R2_PUBLIC_BASE_URL).
-      if (isMobileSafari) {
+      if (isIOS()) {
         if ((isR2 || isB2) && key) {
           return `/api/catalogue/pdf?key=${encodeURIComponent(key)}`;
         }
@@ -94,6 +97,8 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   const pdfDocRef = useRef<import("pdfjs-dist").PDFDocumentProxy | null>(null);
   const loadedPagesRef = useRef<Set<number>>(new Set());
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const isHorizontalSwipe = useRef(false);
+  const viewerRef = useRef<HTMLDivElement>(null);
 
   const loadPage = useCallback(
     async (pageNum: number): Promise<string | null> => {
@@ -136,9 +141,15 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
     let cancelled = false;
     (async () => {
       try {
-        const pdfjsLib = await import("pdfjs-dist");
+        // Use legacy build on iOS - standard build uses Map.getOrInsertComputed,
+        // Promise.withResolvers, etc. which Safari < 26 doesn't support.
+        const pdfjsLib = isIOS()
+          ? await import("pdfjs-dist/legacy/build/pdf.mjs")
+          : await import("pdfjs-dist");
         if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+          pdfjsLib.GlobalWorkerOptions.workerSrc = isIOS()
+            ? "/pdf.worker.legacy.min.mjs"
+            : "/pdf.worker.min.mjs";
         }
         const doc = await pdfjsLib.getDocument(effectivePdfUrl).promise;
         if (cancelled) return;
@@ -189,7 +200,29 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
       x: e.touches[0].clientX,
       y: e.touches[0].clientY,
     };
+    isHorizontalSwipe.current = false;
   };
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!touchStart.current || !e.touches[0]) return;
+    const start = touchStart.current;
+    const touch = e.touches[0];
+    const deltaX = Math.abs(start.x - touch.clientX);
+    const deltaY = Math.abs(start.y - touch.clientY);
+    if (deltaX > 20 && deltaX >= HORIZONTAL_BIAS * deltaY) {
+      isHorizontalSwipe.current = true;
+    }
+    if (isHorizontalSwipe.current) {
+      e.preventDefault();
+    }
+  }, []);
+
+  useEffect(() => {
+    const el = viewerRef.current;
+    if (!el) return;
+    el.addEventListener("touchmove", handleTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", handleTouchMove);
+  }, [handleTouchMove]);
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!touchStart.current || !e.changedTouches[0]) return;
@@ -199,8 +232,11 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
     const deltaY = start.y - endTouch.clientY;
     touchStart.current = null;
 
-    // Only treat as a swipe if the gesture is mostly horizontal
-    if (Math.abs(deltaX) < SWIPE_THRESHOLD_PX || Math.abs(deltaX) <= Math.abs(deltaY)) {
+    // Require longer horizontal swipe and horizontal >> vertical (avoids scroll-up triggering flip)
+    if (
+      Math.abs(deltaX) < SWIPE_THRESHOLD_PX ||
+      Math.abs(deltaX) < HORIZONTAL_BIAS * Math.abs(deltaY)
+    ) {
       return;
     }
 
@@ -213,6 +249,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
 
   const handleTouchCancel = () => {
     touchStart.current = null;
+    isHorizontalSwipe.current = false;
   };
 
   const currentImage = pageCache[currentPage];
@@ -223,6 +260,7 @@ export function FlipbookViewer({ pdfUrl, title }: FlipbookViewerProps) {
   return (
     <div className={`mx-auto w-full ${containerMaxWidthClassName} px-0 sm:px-2`}>
       <div
+        ref={viewerRef}
         className="relative flex min-h-[260px] w-full max-w-full items-center justify-center overflow-hidden rounded-xl bg-foreground/5"
         style={{
           aspectRatio: containerAspectRatio,
