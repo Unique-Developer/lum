@@ -29,7 +29,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { name, categoryId } = body;
+    const { name, categoryId, image } = body;
     if (!name || typeof name !== "string") {
       return NextResponse.json({ error: "Name required" }, { status: 400 });
     }
@@ -54,6 +54,7 @@ export async function POST(req: Request) {
       slug: finalId,
       categoryId: String(categoryId).trim(),
       order: maxOrder + 1,
+      image: image ? String(image).trim() || undefined : undefined,
     };
 
     subcategories.push(newSubcategory);

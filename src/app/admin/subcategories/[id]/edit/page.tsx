@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { FileUpload } from "@/components/admin/FileUpload";
 
 type Subcategory = {
   id: string;
@@ -11,6 +12,7 @@ type Subcategory = {
   slug: string;
   categoryId: string;
   order: number;
+  image?: string;
 };
 
 type Category = {
@@ -57,7 +59,14 @@ export default function EditSubcategoryPage() {
       const res = await fetch(`/api/admin/subcategories/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", ...getHeaders() },
-        body: JSON.stringify({ name: form.name, slug: form.slug, categoryId: form.categoryId, order: form.order }),
+        body: JSON.stringify({
+          name: form.name,
+          slug: form.slug,
+          categoryId: form.categoryId,
+          order: form.order,
+          // Send empty string when cleared so the backend can remove the image.
+          image: form.image?.trim() ?? "",
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -74,6 +83,8 @@ export default function EditSubcategoryPage() {
 
   if (!token) return null;
   if (fetching || !form) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+
+  const uploadPrefix = form.categoryId ? `subcategories/${form.categoryId}` : "subcategories";
 
   return (
     <main className="min-h-screen">
@@ -122,6 +133,42 @@ export default function EditSubcategoryPage() {
                 onChange={(e) => setForm((f) => f && { ...f, name: e.target.value })}
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
               />
+            </div>
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium text-foreground">
+                Subcategory image
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">Optional. Shown on the public catalogue subcategory cards.</p>
+              <div className="mt-2 flex items-center gap-3">
+                <div className="h-16 w-16 overflow-hidden rounded-lg border border-foreground/10 bg-foreground/5">
+                  {form.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={form.image} alt={form.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs text-foreground/40">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex gap-2">
+                    <input
+                      id="image"
+                      value={form.image ?? ""}
+                      onChange={(e) => setForm((f) => (f ? { ...f, image: e.target.value || undefined } : f))}
+                      placeholder="https://... or upload"
+                      className="flex-1 rounded-lg border border-foreground/20 bg-background px-3 py-2 text-sm text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                    />
+                    <FileUpload
+                      accept="image"
+                      prefix={uploadPrefix}
+                      onUpload={(url) => setForm((f) => (f ? { ...f, image: url } : f))}
+                      getHeaders={getHeaders}
+                      buttonLabel="Upload"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
               <label htmlFor="slug" className="block text-sm font-medium text-foreground">

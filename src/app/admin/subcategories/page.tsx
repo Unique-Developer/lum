@@ -12,6 +12,7 @@ type Subcategory = {
   slug: string;
   categoryId: string;
   order: number;
+  image?: string;
 };
 
 type Category = {

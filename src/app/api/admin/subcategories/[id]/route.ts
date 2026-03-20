@@ -41,6 +41,7 @@ export async function PUT(
       slug: slug || current.slug,
       categoryId: body.categoryId !== undefined ? String(body.categoryId).trim() : current.categoryId,
       order: body.order !== undefined ? Number(body.order) : current.order,
+      image: body.image !== undefined ? (body.image ? String(body.image).trim() : undefined) : current.image,
     };
     subcategories[idx] = updated;
     await writeSubcategories(subcategories);

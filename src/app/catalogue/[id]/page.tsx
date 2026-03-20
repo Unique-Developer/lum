@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { getCatalogueById } from "@/lib/catalogue";
 import { getCategoryBySlug, getSubcategories } from "@/lib/categories";
 import { FlipbookViewer } from "@/components/catalogue/FlipbookViewer";
+import { CatalogCoverImage } from "@/components/catalogue/CatalogCoverImage";
 import { absoluteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 
@@ -59,9 +60,17 @@ export default async function CatalogueSlugPage({ params }: Props) {
                   className="group block overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] transition-all duration-300 hover:border-primary-200 hover:shadow-xl"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center">
-                    <span className="text-5xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
-                      {sub.name.charAt(0)}
-                    </span>
+                    {sub.image ? (
+                      <CatalogCoverImage
+                        src={sub.image}
+                        alt={sub.name}
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <span className="text-5xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
+                        {sub.name.charAt(0)}
+                      </span>
+                    )}
                   </div>
                   <div className="p-4 sm:p-6">
                     <h2 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary-main sm:text-xl">

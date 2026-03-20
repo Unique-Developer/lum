@@ -18,6 +18,8 @@ export type Subcategory = {
   slug: string;
   categoryId: string;
   order: number;
+  /** Optional. Shown on public catalogue subcategory cards. */
+  image?: string;
 };
 
 const CATEGORY_CACHE_TTL_MS = 60_000; // 1 minute

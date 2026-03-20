@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { FileUpload } from "@/components/admin/FileUpload";
 
 type Category = {
   id: string;
@@ -22,6 +23,8 @@ export default function NewSubcategoryPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState(preselectedCategoryId || "");
+  const [image, setImage] = useState("");
+  const uploadPrefix = categoryId ? `subcategories/${categoryId}` : "subcategories";
 
   useEffect(() => {
     if (!token) {
@@ -54,7 +57,7 @@ export default function NewSubcategoryPage() {
       const res = await fetch("/api/admin/subcategories", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getHeaders() },
-        body: JSON.stringify({ name, categoryId }),
+        body: JSON.stringify({ name, categoryId, image: image.trim() || undefined }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -121,6 +124,42 @@ export default function NewSubcategoryPage() {
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
                 placeholder="e.g. COB Light, Pendant Light"
               />
+            </div>
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium text-foreground">
+                Subcategory image
+              </label>
+              <p className="mt-1 text-xs text-foreground/60">Optional. Shown on the public catalogue subcategory cards.</p>
+              <div className="mt-2 flex items-center gap-3">
+                <div className="h-16 w-16 overflow-hidden rounded-lg border border-foreground/10 bg-foreground/5">
+                  {image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={image} alt={name || "Subcategory"} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs text-foreground/40">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="flex gap-2">
+                    <input
+                      id="image"
+                      placeholder="https://... or upload"
+                      value={image}
+                      onChange={(e) => setImage(e.target.value)}
+                      className="flex-1 rounded-lg border border-foreground/20 bg-background px-3 py-2 text-sm text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                    />
+                    <FileUpload
+                      accept="image"
+                      prefix={uploadPrefix}
+                      onUpload={(url) => setImage(url)}
+                      getHeaders={getHeaders}
+                      buttonLabel="Upload"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="flex gap-4">
               <button
