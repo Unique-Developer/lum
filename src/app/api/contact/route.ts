@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     const scriptUrl = process.env.GOOGLE_SHEET_SCRIPT_URL;
+
     if (!scriptUrl) {
       return NextResponse.json(
         { ok: false, errors: ["Google script is not configured."] },
@@ -87,6 +88,7 @@ export async function POST(req: NextRequest) {
       : null;
 
     // Apps Script often returns HTTP 200 even for logical errors, so trust payload status first.
+
     if (status !== "success") {
       const fallback = "Failed to submit form. Please try again later.";
       return NextResponse.json(

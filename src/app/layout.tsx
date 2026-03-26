@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { UniqueFeaturesProvider } from "@/components/providers/UniqueFeaturesProvider";
 import { getSiteUrl, getOrganizationJsonLd } from "@/lib/seo";
@@ -81,6 +83,8 @@ export default function RootLayout({
       >
         <SmoothScroll>
           <UniqueFeaturesProvider>{children}</UniqueFeaturesProvider>
+          <Analytics />
+          <SpeedInsights />
         </SmoothScroll>
       </body>
     </html>
