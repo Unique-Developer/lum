@@ -4,6 +4,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { UniqueFeaturesProvider } from "@/components/providers/UniqueFeaturesProvider";
 import { getSiteUrl, getOrganizationJsonLd } from "@/lib/seo";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -82,6 +83,7 @@ export default function RootLayout({
         <SmoothScroll>
           <UniqueFeaturesProvider>{children}</UniqueFeaturesProvider>
         </SmoothScroll>
+        <SpeedInsights />
       </body>
     </html>
   );
