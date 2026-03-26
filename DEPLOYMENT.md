@@ -64,9 +64,13 @@ In **Project Settings → Environment Variables**, add these for **Production** 
 | `R2_SECRET_ACCESS_KEY` | R2 API token secret | Yes |
 | `R2_BUCKET_NAME` | R2 bucket name | Yes |
 | `R2_PUBLIC_BASE_URL` | Public URL (e.g. `https://pub-xxx.r2.dev` or custom domain) | Yes |
-| `RESEND_API_KEY` | Resend API key (for contact form) | Yes (if contact form needed) |
-| `RESEND_FROM_EMAIL` | From address (e.g. `onboarding@resend.dev` or your verified domain) | If using contact form |
-| `CONTACT_EMAIL` | Email where contact form submissions go | If using contact form |
+| `SMTP_HOST` | SMTP server host (e.g. `smtp.gmail.com`) | Yes (if contact form needed) |
+| `SMTP_PORT` | SMTP port (587 STARTTLS, 465 SSL) | Yes (if contact form needed) |
+| `SMTP_USER` | SMTP login email | Yes (if contact form needed) |
+| `SMTP_PASS` | SMTP password / app password | Yes (if contact form needed) |
+| `SMTP_FROM_NAME` | From display name | No (defaults to `Lumin Art`) |
+| `SMTP_FROM_EMAIL` | Optional From email (defaults to `SMTP_USER`) | No |
+| `CONTACT_EMAIL` | Email where contact form submissions go | Yes (if contact form needed) |
 
 ---
 
@@ -86,7 +90,7 @@ If the build succeeds locally, Vercel will build it successfully. Push to your m
 - [ ] Catalogue grid shows thumbnails
 - [ ] Flipbook viewer works
 - [ ] Blog and slug pages load
-- [ ] Contact form submits (check Resend / CONTACT_EMAIL)
+- [ ] Contact form submits (check SMTP / CONTACT_EMAIL)
 - [ ] Architect collaboration form works
 - [ ] Admin login at `/admin` (use `ADMIN_PASSWORD_HASH` in production)
 - [ ] Sitemap at `/sitemap.xml`

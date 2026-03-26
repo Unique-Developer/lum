@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { HomepageImageItem } from "@/lib/homepage";
 import type { HomepageContent } from "@/lib/homepage";
+import type { BlogPost } from "@/lib/blog-types";
 
 function ImageCard({
   img,
@@ -24,7 +25,6 @@ function ImageCard({
         className ?? "",
       ].join(" ")}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={img.src}
         alt={img.alt}
@@ -49,8 +49,63 @@ function ImageCard({
   return card;
 }
 
-export function VisualProofSection({ content }: { content: HomepageContent["visualProof"] }) {
-  const { featuredInstallations, productHighlights, architecturalScenes } = content;
+function PostCarouselCard({ post }: { post: BlogPost }) {
+  const cardImage = post.thumbnail ?? post.media?.find((m) => m.type === "image")?.url ?? null;
+  const hasVideo = Boolean(post.media?.some((m) => m.type === "video"));
+  const date = new Date(post.publishedAt).toLocaleDateString("en-IN", {
+    month: "short",
+    day: "numeric",
+  });
+
+  return (
+    <Link href={`/posts/${post.slug}`} className="block h-full w-full">
+      <div
+        className={[
+          "group relative h-full w-full overflow-hidden rounded-[1.25rem] border border-white/60 bg-white/30",
+          "shadow-[0_10px_35px_-20px_rgba(17,79,117,0.55)] ring-1 ring-black/[0.02] backdrop-blur-sm",
+          "transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_45px_-24px_rgba(17,79,117,0.65)]",
+        ].join(" ")}
+      >
+        {cardImage ? (
+          <img
+            src={cardImage}
+            alt={post.title}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.08]"
+            loading="lazy"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-primary-100/80 to-primary-200/60" />
+        )}
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-95 transition-opacity duration-500 group-hover:opacity-100" />
+
+        <div className="absolute left-4 right-4 bottom-4 space-y-1">
+          <div className="flex items-start justify-between gap-3">
+            <h4 className="line-clamp-1 text-sm font-semibold tracking-tight text-white">{post.title}</h4>
+            {hasVideo && (
+              <span className="inline-flex h-7 items-center rounded-md border border-white/20 bg-black/40 px-2 text-xs font-medium text-white backdrop-blur-sm">
+                Video
+              </span>
+            )}
+          </div>
+          <div className="text-xs text-white/70">
+            {date} · {post.author}
+          </div>
+          <p className="line-clamp-2 text-xs leading-relaxed text-white/85">{post.excerpt?.trim() ? post.excerpt : post.title}</p>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+export function VisualProofSection({
+  content,
+  posts,
+}: {
+  content: HomepageContent["visualProof"];
+  posts: BlogPost[];
+}) {
+  const { featuredInstallations, productHighlights } = content;
   const featuredTrackRef = useRef<HTMLDivElement>(null);
   const productTrackRef = useRef<HTMLDivElement>(null);
   const scenesTrackRef = useRef<HTMLDivElement>(null);
@@ -214,10 +269,10 @@ export function VisualProofSection({ content }: { content: HomepageContent["visu
           <div className="mb-4 flex items-end justify-between gap-4">
             <div>
               <h3 className="text-xl font-semibold tracking-tight text-foreground">
-                {architecturalScenes.title}
+                Studio Stories
               </h3>
               <p className="mt-2 text-sm text-foreground/70">
-                {architecturalScenes.description}
+                Fresh posts from Lumin Art—design notes, project scenes, and behind-the-scenes insights.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -247,18 +302,24 @@ export function VisualProofSection({ content }: { content: HomepageContent["visu
               ref={scenesTrackRef}
               className="grid snap-x snap-mandatory grid-flow-col auto-cols-[84%] gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:auto-cols-[calc((100%-1rem)/2)] sm:gap-4 lg:auto-cols-[calc((100%-2rem)/3)]"
             >
-              {architecturalScenes.images.map((img, index) => (
-                <motion.div
-                  key={img.src}
-                  className="aspect-[16/11] snap-start"
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ duration: 0.55, ease: "easeOut", delay: index * 0.05 }}
-                >
-                  <ImageCard img={img} className="h-full w-full" />
-                </motion.div>
-              ))}
+              {posts.length > 0 ? (
+                posts.slice(0, 6).map((post, index) => (
+                  <motion.div
+                    key={post.id}
+                    className="aspect-[16/11] snap-start"
+                    initial={{ opacity: 0, y: 18 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.55, ease: "easeOut", delay: index * 0.05 }}
+                  >
+                    <PostCarouselCard post={post} />
+                  </motion.div>
+                ))
+              ) : (
+                <div className="col-span-full py-12 text-center text-sm text-foreground/60">
+                  No posts yet. Publish your first blog/post to see it here.
+                </div>
+              )}
             </div>
           </div>
         </div>

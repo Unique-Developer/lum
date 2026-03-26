@@ -25,7 +25,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: catalogue.title,
       description: catalogue.description,
       url,
-      images: catalogue.coverImage ? [absoluteUrl(catalogue.coverImage)] : undefined,
+      images:
+        catalogue.coverImage && catalogue.coverImage !== "/logo.png"
+          ? [absoluteUrl(catalogue.coverImage)]
+          : undefined,
     },
   };
 }

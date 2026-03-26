@@ -7,16 +7,18 @@ import { CTASection } from "@/components/home/CTASection";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { ParallaxSection } from "@/components/ui/ParallaxSection";
 import { getHomepageContent } from "@/lib/homepage";
+import { getBlogPosts } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const content = await getHomepageContent();
+  const posts = await getBlogPosts();
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <HeroSection content={content.hero} />
-      <VisualProofSection content={content.visualProof} />
+      <VisualProofSection content={content.visualProof} posts={posts} />
       <LightHouseLegacySection content={content.lightHouseLegacy} />
       {/* TODO: Re-enable DualBrandSection in upcoming homepage update.
       <ParallaxSection>

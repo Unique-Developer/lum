@@ -1,4 +1,4 @@
-# Backend Setup Guide (MongoDB + Cloudflare R2 + Resend)
+# Backend Setup Guide (MongoDB + Cloudflare R2 + SMTP)
 
 This guide walks you through setting up the backend services for Lumin Art. Complete each section in order. All services offer free tiers suitable for development and small production deployments.
 
@@ -250,64 +250,34 @@ Files **under 4 MB** can use the server fallback (upload via your API) and do no
 
 ---
 
-## 3. Resend Setup (Email)
+## 3. Contact Form Email (Vercel-safe)
 
-Resend handles the contact form emails.
+Vercel serverless functions do not support PHP-style `mail()` / local `sendmail`, and we are not using SMTP.
+Instead, the form posts to `/api/contact`, which forwards the payload to your **Google Apps Script Web App**.
 
-### Step 3.1: Create an Account
+### Step 3.1: Create & Deploy Apps Script Web App
 
-1. Go to [resend.com](https://resend.com)
-2. Click **Start Building** or **Sign Up**
-3. Sign up with email or GitHub
-4. Verify your email
+1. In your Google Sheet: **Extensions → Apps Script**
+2. Add a `doPost(e)` that:
+   - parses JSON
+   - sends email via `MailApp.sendEmail(...)`
+   - (optional) appends a row to the sheet
+3. Deploy: **Deploy → New deployment → Web app**
+   - Execute as: **Me**
+   - Who has access: **Anyone** (or Anyone with the link)
+4. Copy the Web App URL.
 
-### Step 3.2: Create an API Key
-
-1. In the dashboard, open **API Keys** (left sidebar)
-2. Click **Create API Key**
-3. Name it (e.g. `luminart-local`)
-4. Choose permissions (e.g. **Sending access**)
-5. Click **Add**
-6. Copy the key (starts with `re_`); it’s only shown once
-
-### Step 3.3: Add to `.env.local`
+### Step 3.2: Add variable to `.env.local`
 
 Add:
 
-```
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxx
-CONTACT_EMAIL=contact@yourdomain.com
-RESEND_FROM_EMAIL=onboarding@resend.dev
-```
-
-- `CONTACT_EMAIL`: where contact form submissions are sent
-- `RESEND_FROM_EMAIL`: default sender; use `onboarding@resend.dev` for testing (no domain verification)
-
-### Step 3.4: Production Email (Optional)
-
-For production:
-
-1. In Resend: **Domains** → **Add Domain**
-2. Add your domain (e.g. `luminart.com`)
-3. Add the DNS records Resend provides
-4. After verification, set:
-   ```
-   RESEND_FROM_EMAIL=hello@luminart.com
-   ```
-
----
-
-## 4. Optional: Remove Nodemailer
-
-If the project uses Resend exclusively and you don’t need Nodemailer:
-
-```bash
-npm uninstall nodemailer @types/nodemailer
+```env
+GOOGLE_SHEET_SCRIPT_URL=https://script.google.com/macros/s/XXXXXXXX/exec
 ```
 
 ---
 
-## 5. Verify Your Setup
+## 4. Verify Your Setup
 
 1. Ensure `.env.local` exists and contains all variables
 2. Start the app:
@@ -317,7 +287,7 @@ npm uninstall nodemailer @types/nodemailer
 3. Visit `http://localhost:3000` and check:
    - Blog/catalogue pages load (MongoDB)
    - PDFs/images load (R2)
-   - Contact form sends a test email (Resend)
+   - Contact form submits successfully (Apps Script + email)
 
 ---
 
@@ -346,10 +316,8 @@ R2_SECRET_ACCESS_KEY=your_secret_access_key
 R2_BUCKET_NAME=luminart-files
 R2_PUBLIC_BASE_URL=https://pub-xxxx.r2.dev
 
-# Resend
-RESEND_API_KEY=re_xxxxx
-CONTACT_EMAIL=contact@yourdomain.com
-RESEND_FROM_EMAIL=onboarding@resend.dev
+# Contact form (Apps Script)
+GOOGLE_SHEET_SCRIPT_URL=https://script.google.com/macros/s/XXXXXXXX/exec
 
 # Admin (optional)
 ADMIN_EMAIL=admin@luminart.com

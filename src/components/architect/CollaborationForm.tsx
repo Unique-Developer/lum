@@ -222,7 +222,6 @@ export function CollaborationForm() {
                 <input
                   id="projectSize"
                   type="text"
-                  required
                   value={form.projectSize}
                   onChange={handleChange("projectSize")}
                   className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/50 focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
@@ -236,7 +235,6 @@ export function CollaborationForm() {
                 <input
                   id="budgetRange"
                   type="text"
-                  required
                   value={form.budgetRange}
                   onChange={handleChange("budgetRange")}
                   className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-3 text-foreground placeholder:text-foreground/50 focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"

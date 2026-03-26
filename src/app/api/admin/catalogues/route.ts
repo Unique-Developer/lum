@@ -43,7 +43,8 @@ export async function POST(req: Request) {
       id: finalId,
       title: String(title).trim(),
       description: String(description ?? "").trim(),
-      coverImage: String(coverImage ?? "").trim() || "/logo.png",
+      // If no upload happened, keep this empty so the UI can render a creative placeholder.
+      coverImage: String(coverImage ?? "").trim() || "",
       pdfUrl: String(pdfUrl ?? "").trim(),
       pageCount: Number(pageCount) || 0,
       order: maxOrder + 1,

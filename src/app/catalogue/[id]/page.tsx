@@ -6,6 +6,7 @@ import { getCatalogueById } from "@/lib/catalogue";
 import { getCategoryBySlug, getSubcategories } from "@/lib/categories";
 import { FlipbookViewer } from "@/components/catalogue/FlipbookViewer";
 import { CatalogCoverImage } from "@/components/catalogue/CatalogCoverImage";
+import { CatalogCoverPlaceholder } from "@/components/catalogue/CatalogCoverPlaceholder";
 import { absoluteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 
@@ -30,7 +31,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: catalogue.title,
       description: catalogue.description,
       url,
-      images: catalogue.coverImage ? [absoluteUrl(catalogue.coverImage)] : undefined,
+      images:
+        catalogue.coverImage && catalogue.coverImage !== "/logo.png"
+          ? [absoluteUrl(catalogue.coverImage)]
+          : undefined,
     },
   };
 }
@@ -64,12 +68,13 @@ export default async function CatalogueSlugPage({ params }: Props) {
                       <CatalogCoverImage
                         src={sub.image}
                         alt={sub.name}
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="object-contain transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <span className="text-5xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
-                        {sub.name.charAt(0)}
-                      </span>
+                      <CatalogCoverPlaceholder
+                        label={sub.name}
+                        className="transition-transform duration-500 group-hover:scale-105"
+                      />
                     )}
                   </div>
                   <div className="p-4 sm:p-6">

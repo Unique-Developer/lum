@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { getCataloguesBySubcategory } from "@/lib/catalogue";
 import { getCategoryBySlug, getSubcategoryBySlug } from "@/lib/categories";
 import { CatalogCoverImage } from "@/components/catalogue/CatalogCoverImage";
+import { CatalogCoverPlaceholder } from "@/components/catalogue/CatalogCoverPlaceholder";
 
 type Props = { params: Promise<{ id: string; subcategorySlug: string }> };
 
@@ -54,16 +55,17 @@ export default async function CatalogueSubcategoryPage({ params }: Props) {
                 className="group block overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.02] transition-all duration-300 hover:border-primary-200 hover:shadow-xl"
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-100 to-primary-200">
-                  {cat.coverImage ? (
+                  {cat.coverImage && cat.coverImage !== "/logo.png" ? (
                     <CatalogCoverImage
                       src={cat.coverImage}
                       alt={cat.title}
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-primary-main/60 text-6xl font-light">
-                      {cat.title.charAt(0)}
-                    </div>
+                    <CatalogCoverPlaceholder
+                      label={cat.title}
+                      className="transition-transform duration-500 group-hover:scale-105"
+                    />
                   )}
                 </div>
                 <div className="p-4 sm:p-6">

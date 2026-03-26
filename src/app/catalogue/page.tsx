@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCategories } from "@/lib/categories";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { CatalogCoverPlaceholder } from "@/components/catalogue/CatalogCoverPlaceholder";
 
 export const metadata = {
   title: "Catalogue | Lumin Art",
@@ -42,14 +43,13 @@ export default async function CataloguePage() {
                     <img
                       src={cat.image}
                       alt={cat.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <span className="text-6xl font-light text-primary-main/40 group-hover:text-primary-main/60 transition-colors">
-                        {cat.name.charAt(0)}
-                      </span>
-                    </div>
+                    <CatalogCoverPlaceholder
+                      label={cat.name}
+                      className="transition-transform duration-500 group-hover:scale-105"
+                    />
                   )}
                 </div>
                 <div className="p-4 sm:p-6">

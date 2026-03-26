@@ -27,6 +27,12 @@ export const metadata: Metadata = {
   },
   description:
     "Light is not a product. It is an experience. Lumin Art – Professional Lighting Solutions. A Light House Creation.",
+  icons: {
+    // Next.js will emit the appropriate <link rel="icon" ...> tags.
+    // We reuse the existing logo PNG to avoid needing a separate favicon file.
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
