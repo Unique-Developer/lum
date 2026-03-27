@@ -36,15 +36,12 @@ export function AdminShell({
     <div className="flex min-h-screen">
       <aside className="hidden w-56 shrink-0 border-r border-foreground/10 bg-foreground/[0.02] lg:block">
         <div className="sticky top-0 flex flex-col py-6">
-          <Link
-            href="/admin/dashboard"
-            className="flex items-center gap-2 px-6 pb-6"
-          >
+          <div className="flex items-center gap-2 px-6 pb-6">
             <Logo href="/admin/dashboard" height={28} width={100} />
             <span className="text-xs font-medium uppercase tracking-wider text-foreground/50">
               Admin
             </span>
-          </Link>
+          </div>
           <nav className="space-y-0.5 px-3" aria-label="Admin navigation">
             {NAV_ITEMS.map((item) => {
               const active = pathname === item.href || pathname.startsWith(item.href + "/");

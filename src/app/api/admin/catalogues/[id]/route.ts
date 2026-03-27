@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { readCatalogues, writeCatalogues } from "@/lib/storage";
 import type { Catalogue } from "@/lib/catalogue";
 import { clearCatalogueCache } from "@/lib/catalogue";
+import { deleteR2Object, urlToR2Key } from "@/lib/r2";
 
 export async function GET(
   _req: Request,
@@ -33,18 +34,39 @@ export async function PUT(
   try {
     const body = await req.json();
     const current = catalogues[idx];
+    const nextCoverImage =
+      body.coverImage !== undefined ? String(body.coverImage).trim() : current.coverImage;
+    const nextPdfUrl = body.pdfUrl !== undefined ? String(body.pdfUrl).trim() : current.pdfUrl;
     const updated: Catalogue = {
       ...current,
       title: body.title !== undefined ? String(body.title).trim() : current.title,
       description: body.description !== undefined ? String(body.description).trim() : current.description,
-      coverImage: body.coverImage !== undefined ? String(body.coverImage).trim() : current.coverImage,
-      pdfUrl: body.pdfUrl !== undefined ? String(body.pdfUrl).trim() : current.pdfUrl,
+      coverImage: nextCoverImage,
+      pdfUrl: nextPdfUrl,
       pageCount: body.pageCount !== undefined ? Number(body.pageCount) : current.pageCount,
       order: body.order !== undefined ? Number(body.order) : current.order,
       subcategoryId: body.subcategoryId !== undefined ? (body.subcategoryId ? String(body.subcategoryId).trim() : undefined) : current.subcategoryId,
     };
+
+    const keysToDelete = new Set<string>();
+    if (current.coverImage && current.coverImage !== nextCoverImage) {
+      const key = urlToR2Key(current.coverImage);
+      if (key) keysToDelete.add(key);
+    }
+    if (current.pdfUrl && current.pdfUrl !== nextPdfUrl) {
+      const key = urlToR2Key(current.pdfUrl);
+      if (key) keysToDelete.add(key);
+    }
+
     catalogues[idx] = updated;
     await writeCatalogues(catalogues);
+    for (const key of keysToDelete) {
+      try {
+        await deleteR2Object(key);
+      } catch (deleteErr) {
+        console.warn(`Failed to delete replaced R2 object: ${key}`, deleteErr);
+      }
+    }
     clearCatalogueCache();
     return NextResponse.json(updated);
   } catch (e) {
