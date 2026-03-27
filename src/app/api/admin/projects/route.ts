@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { slug, title, category, description, overview, concept, fixtures } = body;
+    const { slug, title, category, description, coverImage, overview, concept, fixtures } = body;
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
     }
@@ -44,6 +44,7 @@ export async function POST(req: Request) {
       title: String(title).trim(),
       category: String(category ?? "Residential").trim(),
       description: String(description ?? "").trim(),
+      coverImage: String(coverImage ?? "").trim(),
       overview: String(overview ?? "").trim(),
       concept: String(concept ?? "").trim(),
       fixtures: Array.isArray(fixtures)

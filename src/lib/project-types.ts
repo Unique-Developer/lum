@@ -3,6 +3,7 @@ export type Project = {
   title: string;
   category: string;
   description: string;
+  coverImage: string;
   overview: string;
   concept: string;
   fixtures: string[];

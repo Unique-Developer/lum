@@ -19,6 +19,68 @@ const ACCEPT_MAP = {
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const SERVER_UPLOAD_LIMIT = 4 * 1024 * 1024; // 4MB — Vercel body limit ~4.5MB; only use server fallback below this
+const IMAGE_MAX_DIMENSION = 2400;
+
+async function loadImageBitmap(file: File): Promise<{ width: number; height: number; draw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void; close?: () => void }> {
+  if ("createImageBitmap" in window) {
+    const bitmap = await createImageBitmap(file);
+    return {
+      width: bitmap.width,
+      height: bitmap.height,
+      draw: (ctx, width, height) => ctx.drawImage(bitmap, 0, 0, width, height),
+      close: () => bitmap.close(),
+    };
+  }
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(new Error("Failed to read image"));
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Failed to decode image"));
+    image.src = dataUrl;
+  });
+  return {
+    width: img.naturalWidth,
+    height: img.naturalHeight,
+    draw: (ctx, width, height) => ctx.drawImage(img, 0, 0, width, height),
+  };
+}
+
+async function compressImage(file: File): Promise<File> {
+  const source = await loadImageBitmap(file);
+  const maxSide = Math.max(source.width, source.height);
+  const scale = maxSide > IMAGE_MAX_DIMENSION ? IMAGE_MAX_DIMENSION / maxSide : 1;
+  const targetWidth = Math.max(1, Math.round(source.width * scale));
+  const targetHeight = Math.max(1, Math.round(source.height * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas not supported");
+  source.draw(ctx, targetWidth, targetHeight);
+  source.close?.();
+
+  const compressedBlob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Image compression failed"));
+        return;
+      }
+      resolve(blob);
+    }, "image/webp", 0.88);
+  });
+
+  const safeBaseName = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9-_]/g, "_");
+  return new File([compressedBlob], `${safeBaseName || "image"}.webp`, {
+    type: "image/webp",
+    lastModified: Date.now(),
+  });
+}
 
 function xhrUpload(
   url: string,
@@ -103,20 +165,30 @@ export function FileUpload({
       return;
     }
 
+    let fileToUpload = file;
+    if (accept === "image") {
+      try {
+        fileToUpload = await compressImage(file);
+      } catch {
+        // Continue with original file if compression is not supported in this browser.
+        fileToUpload = file;
+      }
+    }
+
     setUploading(true);
     const headers = getHeaders();
-    const useServerFallback = file.size <= SERVER_UPLOAD_LIMIT;
+    const useServerFallback = fileToUpload.size <= SERVER_UPLOAD_LIMIT;
 
     try {
       // 1. Try presigned direct upload (supports up to 100MB; R2 CORS may be needed for PUT)
       const presignRes = await fetch(
-        `/api/admin/upload/presign?filename=${encodeURIComponent(file.name)}&contentType=${encodeURIComponent(file.type)}&prefix=${encodeURIComponent(prefix)}`,
+        `/api/admin/upload/presign?filename=${encodeURIComponent(fileToUpload.name)}&contentType=${encodeURIComponent(fileToUpload.type)}&prefix=${encodeURIComponent(prefix)}`,
         { headers }
       );
       const presignData = await presignRes.json();
       if (presignRes.ok) {
-        const uploadRes = await xhrUpload(presignData.uploadUrl, file, {
-          contentType: file.type,
+        const uploadRes = await xhrUpload(presignData.uploadUrl, fileToUpload, {
+          contentType: fileToUpload.type,
           onProgress: setProgress,
         });
         if (uploadRes.ok) {
@@ -153,7 +225,7 @@ export function FileUpload({
     // 3. Fallback for small files only: upload via API (≤ 4MB)
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", fileToUpload);
       formData.append("prefix", prefix);
       const res = await xhrFormUpload("/api/admin/upload", formData, headers, setProgress);
       const data = await res.json();

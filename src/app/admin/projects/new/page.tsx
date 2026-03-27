@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
+import { FileUpload } from "@/components/admin/FileUpload";
 
 export default function NewProjectPage() {
   const { token, getHeaders } = useAdminAuth();
@@ -15,6 +17,7 @@ export default function NewProjectPage() {
     title: "",
     category: "Residential",
     description: "",
+    coverImage: "",
     overview: "",
     concept: "",
     fixturesText: "",
@@ -43,6 +46,7 @@ export default function NewProjectPage() {
           title: form.title,
           category: form.category,
           description: form.description,
+          coverImage: form.coverImage,
           overview: form.overview,
           concept: form.concept,
           fixtures,
@@ -128,6 +132,39 @@ export default function NewProjectPage() {
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground">Cover image</label>
+              <div className="mt-2 flex flex-wrap items-start gap-3">
+                <FileUpload
+                  accept="image"
+                  prefix="projects"
+                  buttonLabel={form.coverImage ? "Replace image" : "Upload image"}
+                  getHeaders={getHeaders}
+                  onUpload={(url) => setForm((f) => ({ ...f, coverImage: url }))}
+                />
+                {form.coverImage && (
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, coverImage: "" }))}
+                    className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm font-medium text-foreground hover:bg-foreground/5"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+              {form.coverImage && (
+                <Image
+                  src={form.coverImage}
+                  alt="Project cover preview"
+                  width={480}
+                  height={270}
+                  className="mt-3 h-36 w-full max-w-xs rounded-lg border border-foreground/10 object-cover"
+                />
+              )}
+              <p className="mt-1 text-xs text-foreground/50">
+                Uploaded images are auto-compressed for fast loading.
+              </p>
             </div>
             <div>
               <label htmlFor="overview" className="block text-sm font-medium text-foreground">

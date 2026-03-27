@@ -62,6 +62,7 @@ export async function PUT(
       title: body.title !== undefined ? String(body.title).trim() : current.title,
       category: body.category !== undefined ? String(body.category).trim() : current.category,
       description: body.description !== undefined ? String(body.description).trim() : current.description,
+      coverImage: body.coverImage !== undefined ? String(body.coverImage).trim() : current.coverImage,
       overview: body.overview !== undefined ? String(body.overview).trim() : current.overview,
       concept: body.concept !== undefined ? String(body.concept).trim() : current.concept,
       fixtures: body.fixtures !== undefined

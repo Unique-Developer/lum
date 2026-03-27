@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { getProjectBySlug } from "@/lib/projects";
@@ -22,6 +23,18 @@ export default async function ProjectDetailPage({ params }: Props) {
               {project.title}
             </h1>
             <p className="mt-4 text-lg text-foreground/75">{project.overview}</p>
+            {project.coverImage && (
+              <div className="mt-8 overflow-hidden rounded-2xl border border-foreground/10">
+                <Image
+                  src={project.coverImage}
+                  alt={project.title}
+                  width={1600}
+                  height={1000}
+                  priority
+                  className="h-auto w-full object-cover"
+                />
+              </div>
+            )}
           </header>
 
           <section className="mb-10 md:mb-12">

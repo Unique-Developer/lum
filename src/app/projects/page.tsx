@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { motion } from "framer-motion";
@@ -11,6 +12,7 @@ type Project = {
   title: string;
   category: string;
   description: string;
+  coverImage: string;
 };
 
 const container = {
@@ -73,9 +75,19 @@ export default function ProjectsPage() {
               >
                 <Link href={`/projects/${project.slug}`} className="block h-full">
                   <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-primary-50 to-primary-100">
-                    <div className="flex h-full items-center justify-center text-primary-main/40 text-4xl font-medium tracking-tight transition-transform duration-500 group-hover:scale-110">
-                      {project.category}
-                    </div>
+                    {project.coverImage ? (
+                      <Image
+                        src={project.coverImage}
+                        alt={project.title}
+                        width={960}
+                        height={720}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-primary-main/40 text-4xl font-medium tracking-tight transition-transform duration-500 group-hover:scale-110">
+                        {project.category}
+                      </div>
+                    )}
                   </div>
                   <div className="p-6">
                     <span className="text-xs uppercase tracking-widest text-primary-main">
