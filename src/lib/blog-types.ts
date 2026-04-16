@@ -15,6 +15,11 @@ export type BlogPost = {
   slug: string;
   title: string;
   excerpt: string;
+  category?: string;
+  /** SEO meta description (typically 120-160 chars). */
+  metaDescription?: string;
+  /** SEO keywords for <meta name="keywords" />. */
+  keywords?: string[];
   content: string;
   publishedAt: string;
   author: string;

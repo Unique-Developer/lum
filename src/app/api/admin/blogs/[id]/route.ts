@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
-import { readBlogPosts, writeBlogPosts } from "@/lib/storage";
+import { readBlogCategories, readBlogPosts, writeBlogPosts } from "@/lib/storage";
 import type { BlogPost } from "@/lib/blog";
 
 function slugify(text: string): string {
@@ -39,6 +39,46 @@ export async function PUT(
   try {
     const body = await req.json();
     const current = posts[idx];
+    const categories = await readBlogCategories();
+    let nextCategory = current.category;
+    if (body.category !== undefined) {
+      if (typeof body.category !== "string") {
+        return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+      }
+      const value = body.category.trim();
+      if (!value) {
+        nextCategory = undefined;
+      } else if (!categories.some((c) => c.id === value)) {
+        return NextResponse.json({ error: "Category not found" }, { status: 400 });
+      } else {
+        nextCategory = value;
+      }
+    }
+
+    const nextMetaDescription =
+      body.metaDescription !== undefined
+        ? typeof body.metaDescription === "string"
+          ? body.metaDescription.trim() || undefined
+          : undefined
+        : current.metaDescription;
+
+    let nextKeywords = current.keywords;
+    if (body.keywords !== undefined) {
+      const incoming = body.keywords;
+      if (typeof incoming === "string") {
+        nextKeywords = incoming
+          .split(",")
+          .map((k: string) => k.trim())
+          .filter(Boolean);
+      } else if (Array.isArray(incoming)) {
+        nextKeywords = incoming
+          .map((k) => (typeof k === "string" ? k.trim() : ""))
+          .filter(Boolean);
+      } else {
+        return NextResponse.json({ error: "Invalid keywords" }, { status: 400 });
+      }
+      nextKeywords = nextKeywords.length ? nextKeywords : undefined;
+    }
 
     let slug = current.slug;
     if (body.slug !== undefined) {
@@ -52,6 +92,9 @@ export async function PUT(
       slug,
       title: body.title !== undefined ? String(body.title).trim() : current.title,
       excerpt: body.excerpt !== undefined ? String(body.excerpt).trim() : current.excerpt,
+      category: nextCategory,
+      metaDescription: nextMetaDescription,
+      keywords: nextKeywords,
       content: body.content !== undefined ? String(body.content).trim() : current.content,
       publishedAt:
         body.publishedAt !== undefined

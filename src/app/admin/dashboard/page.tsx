@@ -25,11 +25,6 @@ export default function AdminDashboardPage() {
       desc: "Edit hero image, visual proof images, legacy milestones, dual brand links, pillars, and CTA.",
     },
     {
-      href: "/admin/projects",
-      title: "Projects",
-      desc: "Manage showcase projects. Add, edit, and remove project listings with title, category, overview, concept, and fixtures.",
-    },
-    {
       href: "/admin/categories",
       title: "Categories",
       desc: "Manage categories and subcategories. Edit name, image, description, and includes for the Lighting Solutions page.",
@@ -48,6 +43,11 @@ export default function AdminDashboardPage() {
       href: "/admin/blogs",
       title: "Posts",
       desc: "Create, edit, and remove blog posts and articles.",
+    },
+    {
+      href: "/admin/blog-categories",
+      title: "Post Categories",
+      desc: "Add and delete categories used for blog/post filtering.",
     },
     {
       href: "/admin/lighting-solutions",

@@ -8,8 +8,9 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { filterPostsBySearch, type BlogPost } from "@/lib/blog-types";
 
 export default function AdminBlogsPage() {
-  const { token, getHeaders, logout } = useAdminAuth();
+  const { token, getHeaders } = useAdminAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [categoriesById, setCategoriesById] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +31,19 @@ export default function AdminBlogsPage() {
       .then(setPosts)
       .catch(() => router.replace("/admin"))
       .finally(() => setLoading(false));
+
+    fetch("/api/admin/blog-categories", { headers: getHeaders() })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((list) => {
+        const map: Record<string, string> = {};
+        if (Array.isArray(list)) {
+          for (const item of list) {
+            if (item?.id && item?.name) map[String(item.id)] = String(item.name);
+          }
+        }
+        setCategoriesById(map);
+      })
+      .catch(() => setCategoriesById({}));
   }, [token, getHeaders, router]);
 
   async function handleDelete(id: string) {
@@ -74,6 +88,12 @@ export default function AdminBlogsPage() {
               >
                 Add post
               </Link>
+              <Link
+                href="/admin/blog-categories"
+                className="rounded-lg border border-foreground/20 px-4 py-2 text-sm font-medium text-foreground hover:bg-foreground/5"
+              >
+                Manage categories
+              </Link>
             </div>
           </div>
 
@@ -88,6 +108,9 @@ export default function AdminBlogsPage() {
                   <p className="mt-1 text-sm text-foreground/70 line-clamp-1">{post.excerpt}</p>
                   <p className="mt-1 text-xs text-foreground/50">
                     /posts/{post.slug} · {new Date(post.publishedAt).toLocaleDateString()}
+                  </p>
+                  <p className="mt-1 text-xs text-foreground/60">
+                    Category: {post.category ? (categoriesById[post.category] ?? post.category) : "None"}
                   </p>
                 </div>
                 <div className="flex gap-3">

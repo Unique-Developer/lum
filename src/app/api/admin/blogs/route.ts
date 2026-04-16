@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
-import { readBlogPosts, writeBlogPosts } from "@/lib/storage";
+import { readBlogCategories, readBlogPosts, writeBlogPosts } from "@/lib/storage";
 import type { BlogPost } from "@/lib/blog";
 
 function slugify(text: string): string {
@@ -25,9 +25,44 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { title, slug, excerpt, content, author, thumbnail, media, adminNotes, postType } = body;
+    const { title, slug, excerpt, category, metaDescription, keywords, content, author, thumbnail, media, adminNotes, postType } =
+      body;
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
+    }
+
+    let normalizedCategory: string | undefined;
+    if (category !== undefined) {
+      if (typeof category !== "string") {
+        return NextResponse.json({ error: "Invalid category" }, { status: 400 });
+      }
+      const value = category.trim();
+      if (value) {
+        const categories = await readBlogCategories();
+        if (!categories.some((c) => c.id === value)) {
+          return NextResponse.json({ error: "Category not found" }, { status: 400 });
+        }
+        normalizedCategory = value;
+      }
+    }
+
+    const normalizedMetaDescription = typeof metaDescription === "string" ? metaDescription.trim() || undefined : undefined;
+
+    let normalizedKeywords: string[] | undefined;
+    if (keywords !== undefined) {
+      if (typeof keywords === "string") {
+        normalizedKeywords = keywords
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean);
+      } else if (Array.isArray(keywords)) {
+        normalizedKeywords = keywords
+          .map((k) => (typeof k === "string" ? k.trim() : ""))
+          .filter(Boolean);
+      } else {
+        return NextResponse.json({ error: "Invalid keywords" }, { status: 400 });
+      }
+      normalizedKeywords = normalizedKeywords.length ? normalizedKeywords : undefined;
     }
 
     const posts = await readBlogPosts();
@@ -48,6 +83,9 @@ export async function POST(req: Request) {
       slug: finalSlug,
       title: String(title).trim(),
       excerpt: String(excerpt ?? "").trim(),
+      category: normalizedCategory,
+      metaDescription: normalizedMetaDescription,
+      keywords: normalizedKeywords,
       content: String(content ?? "").trim(),
       publishedAt: now,
       author: String(author ?? "Lumin Art Studio").trim(),

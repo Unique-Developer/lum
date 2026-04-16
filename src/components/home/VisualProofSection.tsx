@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import type { HomepageImageItem } from "@/lib/homepage";
 import type { HomepageContent } from "@/lib/homepage";
 import type { BlogPost } from "@/lib/blog-types";
+import type { Project } from "@/lib/project-types";
+import type { Catalogue } from "@/lib/catalogue";
 
 function ImageCard({
   img,
@@ -101,14 +103,44 @@ function PostCarouselCard({ post }: { post: BlogPost }) {
 export function VisualProofSection({
   content,
   posts,
+  projects,
+  catalogues,
 }: {
   content: HomepageContent["visualProof"];
   posts: BlogPost[];
+  projects: Project[];
+  catalogues: Catalogue[];
 }) {
   const { featuredInstallations, productHighlights } = content;
   const featuredTrackRef = useRef<HTMLDivElement>(null);
   const productTrackRef = useRef<HTMLDivElement>(null);
   const scenesTrackRef = useRef<HTMLDivElement>(null);
+  const featuredProjectImages: HomepageImageItem[] =
+    projects
+      .filter((project) => Boolean(project.coverImage))
+      .slice(0, 8)
+      .map((project) => ({
+        src: project.coverImage,
+        alt: project.title,
+        label: project.category,
+        href: `/projects/${project.slug}`,
+      }));
+  const featuredImages = featuredProjectImages.length > 0
+    ? featuredProjectImages
+    : featuredInstallations.images;
+  const productCatalogueImages: HomepageImageItem[] =
+    catalogues
+      .filter((catalogue) => Boolean(catalogue.coverImage) && catalogue.coverImage !== "/logo.png")
+      .slice(0, 8)
+      .map((catalogue) => ({
+        src: catalogue.coverImage,
+        alt: catalogue.title,
+        label: catalogue.title,
+        href: `/catalogue/${catalogue.id}`,
+      }));
+  const productImages = productCatalogueImages.length > 0
+    ? productCatalogueImages
+    : productHighlights.images;
 
   const scrollTrack = (ref: React.RefObject<HTMLDivElement | null>, direction: "left" | "right") => {
     const el = ref.current;
@@ -188,16 +220,16 @@ export function VisualProofSection({
               ref={featuredTrackRef}
               className="grid snap-x snap-mandatory grid-flow-col auto-cols-[84%] gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:auto-cols-[calc((100%-1rem)/2)] sm:gap-4 lg:auto-cols-[calc((100%-3rem)/4)]"
             >
-              {featuredInstallations.images.map((img, index) => (
+              {featuredImages.map((img, index) => (
                 <motion.div
-                  key={img.src}
+                  key={img.href ?? `${img.src}-${String(index)}`}
                   className="aspect-[4/3] snap-start"
                   initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.35 }}
                   transition={{ duration: 0.55, ease: "easeOut", delay: index * 0.05 }}
                 >
-                <ImageCard img={img} className="h-full w-full" />
+                <ImageCard img={img} className="h-full w-full" clickable />
                 </motion.div>
               ))}
             </div>
@@ -248,9 +280,9 @@ export function VisualProofSection({
               ref={productTrackRef}
               className="grid snap-x snap-mandatory grid-flow-col auto-cols-[84%] gap-3 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:auto-cols-[calc((100%-1rem)/2)] sm:gap-4 lg:auto-cols-[calc((100%-3rem)/4)]"
             >
-              {productHighlights.images.map((img, i) => (
+              {productImages.map((img, i) => (
                 <motion.div
-                  key={img.src + String(i)}
+                  key={img.href ?? `${img.src}-${String(i)}`}
                   className="aspect-[4/3] snap-start"
                   initial={{ opacity: 0, y: 18 }}
                   whileInView={{ opacity: 1, y: 0 }}

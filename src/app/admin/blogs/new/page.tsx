@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminAuth } from "@/components/admin/AdminAuthProvider";
@@ -12,11 +12,15 @@ export default function NewBlogPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const contentRef = useRef<HTMLTextAreaElement>(null);
   const [form, setForm] = useState({
     title: "",
     slug: "",
     excerpt: "",
+    category: "",
+    metaDescription: "",
+    keywords: "",
     content: "",
     author: "Lumin Art Studio",
     thumbnail: "",
@@ -24,6 +28,14 @@ export default function NewBlogPage() {
     adminNotes: "",
     postType: "blog" as PostType,
   });
+
+  useEffect(() => {
+    if (!token) return;
+    fetch("/api/admin/blog-categories", { headers: getHeaders() })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((list) => setCategories(Array.isArray(list) ? list : []))
+      .catch(() => setCategories([]));
+  }, [token, getHeaders]);
 
   if (!token) {
     router.replace("/admin");
@@ -40,6 +52,9 @@ export default function NewBlogPage() {
         headers: { "Content-Type": "application/json", ...getHeaders() },
         body: JSON.stringify({
         ...form,
+        category: form.category || undefined,
+        metaDescription: form.metaDescription.trim() || undefined,
+        keywords: form.keywords.trim() || undefined,
         thumbnail: form.thumbnail || undefined,
         media: form.media.length ? form.media : undefined,
         adminNotes: form.adminNotes.trim() || undefined,
@@ -100,6 +115,32 @@ export default function NewBlogPage() {
                 onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
               />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-foreground">
+                Category
+              </label>
+              <div className="mt-1 flex items-center gap-3">
+                <select
+                  id="category"
+                  value={form.category}
+                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                  className="w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                >
+                  <option value="">No category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+                <Link
+                  href="/admin/blog-categories"
+                  className="whitespace-nowrap text-sm text-primary-main hover:underline"
+                >
+                  Manage
+                </Link>
+              </div>
             </div>
             <div>
               <label htmlFor="postType" className="block text-sm font-medium text-foreground">
@@ -265,6 +306,40 @@ export default function NewBlogPage() {
                 placeholder="Keywords, tags, reminders…"
                 className="mt-1 w-full rounded-lg border border-foreground/20 bg-foreground/[0.03] px-4 py-2 text-foreground placeholder:text-foreground/40 focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
               />
+            </div>
+            <div className="rounded-xl border border-foreground/10 bg-foreground/[0.02] p-4">
+              <h2 className="text-sm font-semibold text-foreground">SEO</h2>
+              <p className="mt-1 text-xs text-foreground/60">
+                Helps Google and AI agents understand your post faster.
+              </p>
+
+              <div className="mt-4">
+                <label htmlFor="metaDescription" className="block text-sm font-medium text-foreground">
+                  Meta description
+                </label>
+                <textarea
+                  id="metaDescription"
+                  rows={3}
+                  value={form.metaDescription}
+                  onChange={(e) => setForm((f) => ({ ...f, metaDescription: e.target.value }))}
+                  placeholder="A concise summary (recommended 120-160 characters)."
+                  className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                />
+              </div>
+
+              <div className="mt-4">
+                <label htmlFor="keywords" className="block text-sm font-medium text-foreground">
+                  Keywords
+                </label>
+                <textarea
+                  id="keywords"
+                  rows={2}
+                  value={form.keywords}
+                  onChange={(e) => setForm((f) => ({ ...f, keywords: e.target.value }))}
+                  placeholder="comma-separated keywords (e.g. lighting, lenses, architecture)"
+                  className="mt-1 w-full rounded-lg border border-foreground/20 bg-background px-4 py-2 text-foreground focus:border-primary-main focus:outline-none focus:ring-1 focus:ring-primary-main"
+                />
+              </div>
             </div>
             <div className="flex gap-4">
               <button

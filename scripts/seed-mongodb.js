@@ -31,6 +31,7 @@ async function main() {
   const dataDir = path.join(process.cwd(), "src", "data");
   let catalogues = [];
   let categories = [];
+  let blogCategories = [];
   let subcategories = [];
   let posts = [];
 
@@ -52,6 +53,16 @@ async function main() {
     }
   } catch (e) {
     console.warn("No categories.json or parse error:", e.message);
+  }
+
+  try {
+    const blogCatPath = path.join(dataDir, "blog-categories.json");
+    if (fs.existsSync(blogCatPath)) {
+      blogCategories = JSON.parse(fs.readFileSync(blogCatPath, "utf-8"));
+      console.log(`Loaded ${blogCategories.length} blog categories`);
+    }
+  } catch (e) {
+    console.warn("No blog-categories.json or parse error:", e.message);
   }
 
   try {
@@ -88,6 +99,12 @@ async function main() {
     await db.collection("subcategories").deleteMany({});
     await db.collection("subcategories").insertMany(subcategories);
     console.log("Seeded subcategories");
+  }
+
+  if (blogCategories.length > 0) {
+    await db.collection("blog_categories").deleteMany({});
+    await db.collection("blog_categories").insertMany(blogCategories);
+    console.log("Seeded blog_categories");
   }
 
   if (catalogues.length > 0) {

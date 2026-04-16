@@ -1,12 +1,14 @@
 import { getDb } from "./mongodb";
 import type { Catalogue } from "./catalogue";
 import type { BlogPost } from "./blog";
+import type { BlogCategory } from "./blog-categories";
 import type { Category, Subcategory } from "./categories";
 import type { Project } from "./project-types";
 
 const CATALOGUES_COLLECTION = "catalogues";
 const PROJECTS_COLLECTION = "projects";
 const BLOG_POSTS_COLLECTION = "blog_posts";
+const BLOG_CATEGORIES_COLLECTION = "blog_categories";
 const CATEGORIES_COLLECTION = "categories";
 const SUBCATEGORIES_COLLECTION = "subcategories";
 
@@ -45,6 +47,25 @@ export async function writeBlogPosts(posts: BlogPost[]): Promise<void> {
   await col.deleteMany({});
   if (posts.length > 0) {
     await col.insertMany(posts);
+  }
+}
+
+export async function readBlogCategories(): Promise<BlogCategory[]> {
+  try {
+    const db = await getDb();
+    const docs = await db.collection<BlogCategory>(BLOG_CATEGORIES_COLLECTION).find({}).toArray();
+    return docs.map((d) => ({ ...d, _id: undefined })) as BlogCategory[];
+  } catch {
+    return [];
+  }
+}
+
+export async function writeBlogCategories(categories: BlogCategory[]): Promise<void> {
+  const db = await getDb();
+  const col = db.collection<BlogCategory>(BLOG_CATEGORIES_COLLECTION);
+  await col.deleteMany({});
+  if (categories.length > 0) {
+    await col.insertMany(categories);
   }
 }
 

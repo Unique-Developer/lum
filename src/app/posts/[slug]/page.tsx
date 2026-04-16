@@ -22,6 +22,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getBlogPostBySlug(slug);
   if (!post) return {};
   const url = absoluteUrl(`/posts/${post.slug}`);
+
+  const metaDescription = post.metaDescription?.trim() || post.excerpt;
+  const keywords =
+    post.keywords && post.keywords.length ? post.keywords.join(", ") : undefined;
+  const other = keywords ? { keywords } : undefined;
+
   const ogImage =
     post.thumbnail ??
     post.media?.find((m) => m.type === "image")?.url ??
@@ -29,12 +35,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImageUrl = ogImage.startsWith("http") ? ogImage : absoluteUrl(ogImage);
   return {
     title: post.title,
-    description: post.excerpt,
+    description: metaDescription,
     alternates: { canonical: url },
+    other,
     openGraph: {
       type: "article",
       title: post.title,
-      description: post.excerpt,
+      description: metaDescription,
       url,
       publishedTime: post.publishedAt,
       authors: [post.author],
@@ -53,7 +60,7 @@ export default async function PostDetailPage({ params }: Props) {
   const headings = getHeadingsFromHtml(post.content);
   const articleJsonLd = getArticleJsonLd({
     title: post.title,
-    description: post.excerpt,
+    description: post.metaDescription?.trim() || post.excerpt,
     publishedAt: post.publishedAt,
     author: post.author,
     url: absoluteUrl(`/posts/${post.slug}`),

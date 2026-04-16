@@ -8,11 +8,11 @@ import { Logo } from "@/components/layout/Logo";
 const NAV_ITEMS = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "◉" },
   { href: "/admin/homepage", label: "Homepage", icon: "⌂" },
-  { href: "/admin/projects", label: "Projects", icon: "◇" },
   { href: "/admin/categories", label: "Categories", icon: "▤" },
   { href: "/admin/subcategories", label: "Subcategories", icon: "▦" },
   { href: "/admin/catalogues", label: "Catalogues", icon: "☰" },
   { href: "/admin/blogs", label: "Posts", icon: "✎" },
+  { href: "/admin/blog-categories", label: "Post Categories", icon: "◌" },
   { href: "/admin/lighting-solutions", label: "Lighting Solutions", icon: "◐" },
   { href: "/admin/storage", label: "Storage", icon: "◉" },
 ];
