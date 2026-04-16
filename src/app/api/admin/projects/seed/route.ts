@@ -12,6 +12,7 @@ const SAMPLE_PROJECTS: Omit<Project, "order">[] = [
     description:
       "Layered architectural and decorative lighting for a premium residence in Surat.",
     coverImage: "",
+    photos: [],
     overview:
       "A premium residence where architectural and decorative lighting were planned together to highlight volumes, materials, and artwork.",
     concept:
@@ -30,6 +31,7 @@ const SAMPLE_PROJECTS: Omit<Project, "order">[] = [
     description:
       "Concept-to-execution lighting for a modern villa with double-height spaces.",
     coverImage: "",
+    photos: [],
     overview:
       "Concept and execution for a modern villa with double-height spaces, large glazing, and indoor–outdoor connections.",
     concept:
@@ -48,6 +50,7 @@ const SAMPLE_PROJECTS: Omit<Project, "order">[] = [
     description:
       "Compact apartment lighting planned with zoning, dimming, and low-glare fixtures.",
     coverImage: "",
+    photos: [],
     overview:
       "Lighting design for a compact but high-value apartment, planned with zoning, dimming, and low-glare fixtures.",
     concept:
@@ -66,6 +69,7 @@ const SAMPLE_PROJECTS: Omit<Project, "order">[] = [
     description:
       "Warm, layered lighting for an all-day restaurant that shifts from day to night.",
     coverImage: "",
+    photos: [],
     overview:
       "A warm, layered lighting scheme for an all-day restaurant that shifts smoothly from bright day service to intimate evening dining.",
     concept:
@@ -84,6 +88,7 @@ const SAMPLE_PROJECTS: Omit<Project, "order">[] = [
     description:
       "Human-centric lighting with linear profiles, meeting room accents, and focused task zones.",
     coverImage: "",
+    photos: [],
     overview:
       "Office lighting planned around visual comfort, productivity, and clear zoning between focus areas, collaboration zones, and circulation.",
     concept:

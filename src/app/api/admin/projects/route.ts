@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { readProjects, writeProjects } from "@/lib/storage";
-import type { Project } from "@/lib/project-types";
+import { normalizeProject, type Project } from "@/lib/project-types";
 import { clearProjectsCache } from "@/lib/projects";
 
 function slugify(text: string): string {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { slug, title, category, description, coverImage, overview, concept, fixtures } = body;
+    const { slug, title, category, description, coverImage, photos, overview, concept, fixtures } = body;
     if (!title || typeof title !== "string") {
       return NextResponse.json({ error: "Title required" }, { status: 400 });
     }
@@ -39,19 +39,24 @@ export async function POST(req: Request) {
     }
 
     const maxOrder = projects.length ? Math.max(...projects.map((p) => p.order)) : -1;
-    const newProject: Project = {
+    const normalizedPhotos = Array.isArray(photos)
+      ? photos.map((photo: unknown) => String(photo).trim()).filter(Boolean)
+      : [];
+    const normalizedCoverImage = String(coverImage ?? "").trim();
+    const newProject: Project = normalizeProject({
       slug: finalSlug,
       title: String(title).trim(),
       category: String(category ?? "Residential").trim(),
       description: String(description ?? "").trim(),
-      coverImage: String(coverImage ?? "").trim(),
+      coverImage: normalizedCoverImage || normalizedPhotos[0] || "",
+      photos: normalizedPhotos,
       overview: String(overview ?? "").trim(),
       concept: String(concept ?? "").trim(),
       fixtures: Array.isArray(fixtures)
         ? fixtures.map((f) => String(f).trim()).filter(Boolean)
         : [],
       order: maxOrder + 1,
-    };
+    });
 
     projects.push(newProject);
     await writeProjects(projects);

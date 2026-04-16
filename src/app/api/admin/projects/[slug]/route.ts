@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { readProjects, writeProjects } from "@/lib/storage";
-import type { Project } from "@/lib/project-types";
+import { normalizeProject, type Project } from "@/lib/project-types";
 import { clearProjectsCache } from "@/lib/projects";
 
 function slugify(text: string): string {
@@ -40,6 +40,14 @@ export async function PUT(
   try {
     const body = await req.json();
     const current = projects[idx];
+    const normalizedPhotos = body.photos !== undefined
+      ? (Array.isArray(body.photos)
+          ? body.photos.map((photo: unknown) => String(photo).trim()).filter(Boolean)
+          : current.photos)
+      : current.photos;
+    const normalizedCoverImage = body.coverImage !== undefined
+      ? String(body.coverImage).trim()
+      : current.coverImage;
     const newSlug =
       body.slug !== undefined
         ? slugify(String(body.slug).trim() || current.slug)
@@ -56,13 +64,14 @@ export async function PUT(
       }
     }
 
-    const updated: Project = {
+    const updated: Project = normalizeProject({
       ...current,
       slug: newSlug,
       title: body.title !== undefined ? String(body.title).trim() : current.title,
       category: body.category !== undefined ? String(body.category).trim() : current.category,
       description: body.description !== undefined ? String(body.description).trim() : current.description,
-      coverImage: body.coverImage !== undefined ? String(body.coverImage).trim() : current.coverImage,
+      coverImage: normalizedCoverImage || normalizedPhotos[0] || "",
+      photos: normalizedPhotos,
       overview: body.overview !== undefined ? String(body.overview).trim() : current.overview,
       concept: body.concept !== undefined ? String(body.concept).trim() : current.concept,
       fixtures: body.fixtures !== undefined
@@ -71,7 +80,7 @@ export async function PUT(
             : current.fixtures)
         : current.fixtures,
       order: body.order !== undefined ? Number(body.order) : current.order,
-    };
+    });
     projects[idx] = updated;
     await writeProjects(projects);
     clearProjectsCache();

@@ -3,7 +3,7 @@ import type { Catalogue } from "./catalogue";
 import type { BlogPost } from "./blog";
 import type { BlogCategory } from "./blog-categories";
 import type { Category, Subcategory } from "./categories";
-import type { Project } from "./project-types";
+import { normalizeProject, type Project } from "./project-types";
 
 const CATALOGUES_COLLECTION = "catalogues";
 const PROJECTS_COLLECTION = "projects";
@@ -111,7 +111,7 @@ export async function readProjects(): Promise<Project[]> {
   try {
     const db = await getDb();
     const docs = await db.collection<Project>(PROJECTS_COLLECTION).find({}).toArray();
-    return docs.map((d) => ({ ...d, _id: undefined })) as Project[];
+    return docs.map((d) => normalizeProject({ ...d, _id: undefined } as Project));
   } catch {
     return [];
   }

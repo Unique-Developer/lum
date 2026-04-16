@@ -11,6 +11,7 @@ export default async function ProjectDetailPage({ params }: Props) {
   const project = await getProjectBySlug(slug);
 
   if (!project) notFound();
+  const galleryImages = project.photos.length > 0 ? project.photos : project.coverImage ? [project.coverImage] : [];
 
   return (
     <main className="min-h-screen bg-background">
@@ -23,10 +24,10 @@ export default async function ProjectDetailPage({ params }: Props) {
               {project.title}
             </h1>
             <p className="mt-4 text-lg text-foreground/75">{project.overview}</p>
-            {project.coverImage && (
+            {galleryImages[0] && (
               <div className="mt-8 overflow-hidden rounded-2xl border border-foreground/10">
                 <Image
-                  src={project.coverImage}
+                  src={galleryImages[0]}
                   alt={project.title}
                   width={1600}
                   height={1000}
@@ -53,9 +54,25 @@ export default async function ProjectDetailPage({ params }: Props) {
 
           <section>
             <h2 className="text-xl font-semibold tracking-tight text-foreground">Installation Images</h2>
-            <p className="mt-3 text-sm text-foreground/70">
-              Photography and detailed installation images can be added here as the project gallery grows.
-            </p>
+            {galleryImages.length > 0 ? (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                {galleryImages.map((photo, index) => (
+                  <div key={photo} className="overflow-hidden rounded-2xl border border-foreground/10">
+                    <Image
+                      src={photo}
+                      alt={`${project.title} photo ${index + 1}`}
+                      width={1200}
+                      height={900}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-foreground/70">
+                No project photos added yet.
+              </p>
+            )}
           </section>
         </div>
       </article>

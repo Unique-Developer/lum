@@ -13,6 +13,7 @@ type Project = {
   category: string;
   description: string;
   coverImage: string;
+  photos: string[];
   overview: string;
   concept: string;
   fixtures: string[];
@@ -55,7 +56,8 @@ export default function EditProjectPage() {
           title: form.title,
           category: form.category,
           description: form.description,
-          coverImage: form.coverImage,
+          coverImage: form.coverImage || form.photos[0] || "",
+          photos: form.photos,
           overview: form.overview,
           concept: form.concept,
           fixtures: form.fixtures,
@@ -153,36 +155,63 @@ export default function EditProjectPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Cover image</label>
+              <label className="block text-sm font-medium text-foreground">Project photos</label>
               <div className="mt-2 flex flex-wrap items-start gap-3">
                 <FileUpload
                   accept="image"
                   prefix="projects"
-                  buttonLabel={form.coverImage ? "Replace image" : "Upload image"}
+                  buttonLabel="Add photo"
                   getHeaders={getHeaders}
-                  onUpload={(url) => setForm((f) => (f ? { ...f, coverImage: url } : null))}
+                  onUpload={(url) =>
+                    setForm((f) => {
+                      if (!f) return null;
+                      const photos = [...f.photos, url];
+                      return {
+                        ...f,
+                        photos,
+                        coverImage: photos[0] || "",
+                      };
+                    })
+                  }
                 />
-                {form.coverImage && (
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => (f ? { ...f, coverImage: "" } : null))}
-                    className="rounded-lg border border-foreground/20 px-3 py-1.5 text-sm font-medium text-foreground hover:bg-foreground/5"
-                  >
-                    Remove
-                  </button>
-                )}
               </div>
-              {form.coverImage && (
-                <Image
-                  src={form.coverImage}
-                  alt="Project cover preview"
-                  width={480}
-                  height={270}
-                  className="mt-3 h-36 w-full max-w-xs rounded-lg border border-foreground/10 object-cover"
-                />
+              {form.photos.length > 0 && (
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {form.photos.map((photo, index) => (
+                    <div key={photo} className="overflow-hidden rounded-lg border border-foreground/10 p-2">
+                      <Image
+                        src={photo}
+                        alt={`Project photo ${index + 1}`}
+                        width={480}
+                        height={270}
+                        className="h-36 w-full rounded-md object-cover"
+                      />
+                      <div className="mt-2 flex items-center justify-between gap-3 text-xs text-foreground/60">
+                        <span>{index === 0 ? "Used as project thumbnail" : `Photo ${index + 1}`}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setForm((f) => {
+                              if (!f) return null;
+                              const photos = f.photos.filter((_, photoIndex) => photoIndex !== index);
+                              return {
+                                ...f,
+                                photos,
+                                coverImage: photos[0] || "",
+                              };
+                            })
+                          }
+                          className="rounded-lg border border-foreground/20 px-2 py-1 text-foreground hover:bg-foreground/5"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
               <p className="mt-1 text-xs text-foreground/50">
-                Uploaded images are auto-compressed for fast loading.
+                Add multiple photos. The first photo is used as the thumbnail on the projects page.
               </p>
             </div>
             <div>
